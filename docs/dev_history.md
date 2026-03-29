@@ -25,7 +25,7 @@ frontend (`apps/web`), backend (`apps/api`), ai-service (`apps/ai-service`).
 - Добавлены root-скрипты запуска и проверок (`dev:*`, `dev:all`, `check:health`).
 - Зафиксирована карта портов и обновлена документация по локальному запуску.
 
-## Этап 4. Проектирование модульной и hook-архитектуры (частичный результат)
+## Этап 4. Проектирование модульной и hook-архитектуры
 ### Что зафиксировано по факту
 - В `apps/web` оформлены домены editor frontend:
 `viewport`, `grid`, `geometry`, `selection`, `dimensions`, `tools`, `import`, `save`, `export`.
@@ -40,8 +40,10 @@ typed hook names/contexts/payloads, register/unregister/execute, safe execution.
 stage contracts, stage registry, safe sequential execution, структура ошибок и debug contracts.
 - Для `EditorHookManager` и `PipelineManager` добавлено базовое логирование выполнения
  (start/finish/error) и режим continue-on-safe-failure для архитектурного каркаса.
+- Доделана детализация hook/stage points, форматов регистрации внутренних модулей,
+вызова обработчиков и runtime-контекста в `apps/web`, `apps/api`, `apps/ai-service`.
+- Добавлено единообразное chain-логирование и safe-failure политики для расширяемого каркаса.
 
-### Что пока остается в рамках этапа 4
-- Дальнейшая детализация hook points и менеджеров расширения.
-- Уточнение форматов контекста для междоменного взаимодействия.
-- Без реализации feature-логики (по плану этапа 4 это сознательно отложено).
+### Статус этапа
+- Этап 4 закрыт по факту как архитектурный каркас.
+- Feature-логика по плану в этап 4 не входит и реализуется на следующих этапах.
