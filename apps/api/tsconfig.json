@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "src",
+    "types": ["node"],
+    "paths": {
+      "@/*": ["*"],
+      "@contracts": ["../../../packages/contracts/src/index.ts"],
+      "@contracts/*": ["../../../packages/contracts/src/*"]
+    }
+  },
+  "include": ["src"]
+}

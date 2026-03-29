@@ -1,0 +1,28 @@
+{
+  "name": "digitalization-of-handwritten-drawings",
+  "private": true,
+  "packageManager": "pnpm@10.6.2",
+  "scripts": {
+    "setup": "npx pnpm@10.6.2 install",
+    "dev": "npm run dev:api",
+    "dev:all": "powershell -ExecutionPolicy Bypass -File scripts/dev-all.ps1",
+    "stop:all": "powershell -ExecutionPolicy Bypass -File scripts/stop-all.ps1",
+    "status:all": "powershell -ExecutionPolicy Bypass -File scripts/status-all.ps1",
+    "dev:web": "npx pnpm@10.6.2 --filter @app/web dev",
+    "dev:api": "npx pnpm@10.6.2 --filter @app/api dev",
+    "dev:ai": ".\\apps\\ai-service\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8001 --app-dir apps/ai-service",
+    "dev:ai:managed": ".\\apps\\ai-service\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --app-dir apps/ai-service",
+    "dev:api:log": "powershell -ExecutionPolicy Bypass -File scripts/dev-api-log.ps1",
+    "check:health": "powershell -ExecutionPolicy Bypass -File scripts/check-health.ps1",
+    "run:log": "powershell -ExecutionPolicy Bypass -File scripts/run-with-log.ps1",
+    "build": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* build",
+    "typecheck": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* typecheck",
+    "lint": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* lint",
+    "format": "prettier --cache --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
+  }
+}
