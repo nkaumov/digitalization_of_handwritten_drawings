@@ -1,13 +1,17 @@
-﻿{
+{
   "name": "digitalization-of-handwritten-drawings",
   "private": true,
   "packageManager": "pnpm@10.6.2",
   "scripts": {
-    "dev:web": "pnpm --filter @app/web dev",
-    "dev:api": "pnpm --filter @app/api dev",
-    "build": "pnpm -r --filter ./apps/* --filter ./packages/* build",
-    "typecheck": "pnpm -r --filter ./apps/* --filter ./packages/* typecheck",
-    "lint": "pnpm -r --filter ./apps/* --filter ./packages/* lint",
+    "setup": "npx pnpm@10.6.2 install",
+    "dev": "npm run dev:api",
+    "dev:web": "npx pnpm@10.6.2 --filter @app/web dev",
+    "dev:api": "npx pnpm@10.6.2 --filter @app/api dev",
+    "dev:api:log": "powershell -ExecutionPolicy Bypass -File scripts/dev-api-log.ps1",
+    "run:log": "powershell -ExecutionPolicy Bypass -File scripts/run-with-log.ps1",
+    "build": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* build",
+    "typecheck": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* typecheck",
+    "lint": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* lint",
     "format": "prettier --cache --write .",
     "format:check": "prettier --check ."
   },

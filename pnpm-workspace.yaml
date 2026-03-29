@@ -1,4 +1,4 @@
-﻿packages:
+packages:
   - apps/web
   - apps/api
   - packages/contracts

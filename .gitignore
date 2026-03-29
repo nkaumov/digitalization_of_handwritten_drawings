@@ -23,3 +23,7 @@ storage/exports/*
 !storage/exports/.gitkeep
 storage/debug/*
 !storage/debug/.gitkeep
+
+# Local terminal logs
+logs/*
+!logs/.gitkeep
