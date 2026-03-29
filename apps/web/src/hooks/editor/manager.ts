@@ -1,16 +1,17 @@
-import {
-  EDITOR_HOOK_NAMES,
-  type EditorHookContext,
-  type EditorHookHandler,
-  type EditorHookManagerOptions,
-  type EditorHookName,
-  type HookExecutionError,
-  type HookExecutionResult,
-  type RegisterHookResult,
-} from './types';
+import type { EditorHookContextByName } from './contexts';
+import { EDITOR_HOOK_NAMES, type EditorHookName } from './hook-names';
+import type {
+  EditorHookHandler,
+  EditorHookManagerOptions,
+  HookExecutionError,
+  HookExecutionResult,
+  RegisterHookResult,
+} from './contracts';
+
+type InternalHookHandler = (context: unknown) => unknown | Promise<unknown>;
 
 export class EditorHookManager {
-  private readonly handlers = new Map<EditorHookName, Map<string, EditorHookHandler>>();
+  private readonly handlers = new Map<EditorHookName, Map<string, InternalHookHandler>>();
 
   private sequence = 0;
 
@@ -20,15 +21,21 @@ export class EditorHookManager {
     this.onError = options?.onError;
 
     for (const name of EDITOR_HOOK_NAMES) {
-      this.handlers.set(name, new Map<string, EditorHookHandler>());
+      this.handlers.set(name, new Map<string, InternalHookHandler>());
     }
   }
 
-  public register(name: EditorHookName, handler: EditorHookHandler): RegisterHookResult {
+  public register<TName extends EditorHookName>(
+    name: TName,
+    handler: EditorHookHandler<TName>,
+  ): RegisterHookResult {
     const handlerId = this.nextHandlerId(name);
     const bucket = this.getBucket(name);
 
-    bucket.set(handlerId, handler);
+    const wrapped: InternalHookHandler = (context) =>
+      handler(context as EditorHookContextByName[TName]);
+
+    bucket.set(handlerId, wrapped);
 
     return {
       handlerId,
@@ -56,10 +63,10 @@ export class EditorHookManager {
     return this.getBucket(name).size;
   }
 
-  public async execute<TContext extends EditorHookContext>(
-    name: EditorHookName,
-    context: TContext,
-  ): Promise<HookExecutionResult<TContext>> {
+  public async execute<TName extends EditorHookName>(
+    name: TName,
+    context: EditorHookContextByName[TName],
+  ): Promise<HookExecutionResult<TName>> {
     const bucket = this.getBucket(name);
     const errors: HookExecutionError[] = [];
     let currentContext = context;
@@ -68,7 +75,7 @@ export class EditorHookManager {
       try {
         const next = await handler(currentContext);
         if (next !== undefined) {
-          currentContext = next as TContext;
+          currentContext = next as EditorHookContextByName[TName];
         }
       } catch (error) {
         const executionError: HookExecutionError = {
@@ -88,7 +95,7 @@ export class EditorHookManager {
     };
   }
 
-  private getBucket(name: EditorHookName): Map<string, EditorHookHandler> {
+  private getBucket(name: EditorHookName): Map<string, InternalHookHandler> {
     const bucket = this.handlers.get(name);
     if (!bucket) {
       throw new Error(`UNKNOWN_HOOK_NAME:${name}`);
