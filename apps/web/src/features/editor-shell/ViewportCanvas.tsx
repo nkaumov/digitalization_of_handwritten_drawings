@@ -15,7 +15,8 @@ interface ViewportCanvasProps {
   };
   scene: GeometryScene;
   selection: SelectionState;
-  onPointSelect: (contourId: string, pointId: string) => void;
+  onPointSelect: (contourId: string, pointId: string, isMultiSelect: boolean) => void;
+  onPointMove: (contourId: string, pointId: string, x: number, y: number) => void;
   onSegmentSelect: (contourId: string, segmentId: string) => void;
   onPointerDown: (event: PointerEvent<HTMLElement>) => void;
   onPointerMove: (event: PointerEvent<HTMLElement>) => void;
@@ -31,6 +32,7 @@ export function ViewportCanvas({
   scene,
   selection,
   onPointSelect,
+  onPointMove,
   onSegmentSelect,
   onPointerDown,
   onPointerMove,
@@ -63,6 +65,7 @@ export function ViewportCanvas({
           scene={scene}
           selection={selection}
           onPointSelect={onPointSelect}
+          onPointMove={onPointMove}
           onSegmentSelect={onSegmentSelect}
         />
       </div>

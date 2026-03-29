@@ -1,11 +1,11 @@
 ﻿import { useMemo, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { buildGeometryScene } from '@/domains/geometry';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAppConfig } from '@/config/ConfigProvider';
 import { createEditorHistoryManager } from '@/features/editor-shell/history';
 import { editorShellMockDrawing } from '@/features/editor-shell/mockDrawing';
+import { useDrawingEditor } from '@/features/editor-shell/useDrawingEditor';
 import { useGeometrySelection } from '@/features/editor-shell/useGeometrySelection';
 import { ViewportCanvas } from '@/features/editor-shell/ViewportCanvas';
 import { useViewportNavigation } from '@/features/editor-shell/viewport';
@@ -15,28 +15,43 @@ export function EditorShellPage() {
   const config = useAppConfig();
   const historyManager = useMemo(() => createEditorHistoryManager(), []);
   const navigation = useViewportNavigation();
-  const geometryScene = useMemo(() => buildGeometryScene(editorShellMockDrawing), []);
+  const drawingEditor = useDrawingEditor(editorShellMockDrawing);
   const selectionApi = useGeometrySelection();
 
   const historyState = historyManager.getState();
+  const closedContours = drawingEditor.drawing.contours.filter((contour) => contour.closed).length;
+  const openContours = drawingEditor.drawing.contours.length - closedContours;
 
   const selectedLabel = useMemo(() => {
-    if (!selectionApi.selection.target) {
-      return t('editorShell.selection.none');
-    }
-
-    if (selectionApi.selection.target.kind === 'point') {
-      return t('editorShell.selection.point', {
-        contourId: selectionApi.selection.target.contourId,
-        pointId: selectionApi.selection.target.pointId,
+    if (selectionApi.selectedSegment) {
+      return t('editorShell.selection.segment', {
+        contourId: selectionApi.selectedSegment.contourId,
+        segmentId: selectionApi.selectedSegment.segmentId,
       });
     }
 
-    return t('editorShell.selection.segment', {
-      contourId: selectionApi.selection.target.contourId,
-      segmentId: selectionApi.selection.target.segmentId,
+    if (selectionApi.selectedPoints.length === 0) {
+      return t('editorShell.selection.none');
+    }
+
+    if (selectionApi.selectedPoints.length === 1) {
+      const [point] = selectionApi.selectedPoints;
+      if (!point) {
+        return t('editorShell.selection.none');
+      }
+
+      return t('editorShell.selection.point', {
+        contourId: point.contourId,
+        pointId: point.pointId,
+      });
+    }
+
+    const [first, second] = selectionApi.selectedPoints;
+    return t('editorShell.selection.twoPoints', {
+      first: `${first?.contourId}:${first?.pointId}`,
+      second: `${second?.contourId}:${second?.pointId}`,
     });
-  }, [selectionApi.selection.target, t]);
+  }, [selectionApi.selectedPoints, selectionApi.selectedSegment, t]);
 
   const handleCanvasPointerDown = (event: PointerEvent<HTMLElement>) => {
     const target = event.target as HTMLElement;
@@ -45,6 +60,36 @@ export function EditorShellPage() {
     }
 
     navigation.onPointerDown(event);
+  };
+
+  const handlePointSelect = (contourId: string, pointId: string, isMultiSelect: boolean) => {
+    if (isMultiSelect) {
+      selectionApi.togglePoint(contourId, pointId);
+      return;
+    }
+
+    selectionApi.selectPointExclusive(contourId, pointId);
+  };
+
+  const handlePointMove = (contourId: string, pointId: string, x: number, y: number) => {
+    drawingEditor.movePoint({ contourId, pointId }, x, y);
+  };
+
+  const handleCreateLine = () => {
+    drawingEditor.createLine(selectionApi.selectedPoints);
+  };
+
+  const handleConnectPoints = () => {
+    drawingEditor.connectLines(selectionApi.selectedPoints);
+  };
+
+  const handleDeleteSegment = () => {
+    if (!selectionApi.selectedSegment) {
+      return;
+    }
+
+    drawingEditor.deleteSegment(selectionApi.selectedSegment);
+    selectionApi.clear();
   };
 
   return (
@@ -61,6 +106,17 @@ export function EditorShellPage() {
         <section className="editor-shell__panel">
           <h2>{t('editorShell.sidebar.toolsTitle')}</h2>
           <p>{t('editorShell.sidebar.toolsPlaceholder')}</p>
+          <div className="editor-shell__history-actions">
+            <button type="button" onClick={handleCreateLine} disabled={selectionApi.selectedPoints.length !== 2}>
+              {t('editorShell.sidebar.createLineAction')}
+            </button>
+            <button type="button" onClick={handleConnectPoints} disabled={selectionApi.selectedPoints.length !== 2}>
+              {t('editorShell.sidebar.connectPointsAction')}
+            </button>
+            <button type="button" onClick={handleDeleteSegment} disabled={!selectionApi.selectedSegment}>
+              {t('editorShell.sidebar.deleteSegmentAction')}
+            </button>
+          </div>
         </section>
 
         <section className="editor-shell__panel">
@@ -83,11 +139,12 @@ export function EditorShellPage() {
           <h2>{t('editorShell.selection.title')}</h2>
           <p>{t('editorShell.selection.description')}</p>
           <p>{selectedLabel}</p>
+          <p>{t('editorShell.selection.multiSelectHint')}</p>
           <p>
             {t('editorShell.selection.counts', {
-              contours: geometryScene.contours.length,
-              points: geometryScene.points.length,
-              segments: geometryScene.segments.length,
+              contours: drawingEditor.scene.contours.length,
+              points: drawingEditor.scene.points.length,
+              segments: drawingEditor.scene.segments.length,
             })}
           </p>
         </section>
@@ -116,9 +173,10 @@ export function EditorShellPage() {
           t={t}
           viewport={navigation.viewport}
           grid={navigation.grid}
-          scene={geometryScene}
+          scene={drawingEditor.scene}
           selection={selectionApi.selection}
-          onPointSelect={selectionApi.selectPoint}
+          onPointSelect={handlePointSelect}
+          onPointMove={handlePointMove}
           onSegmentSelect={selectionApi.selectSegment}
           onPointerDown={handleCanvasPointerDown}
           onPointerMove={navigation.onPointerMove}
@@ -140,6 +198,12 @@ export function EditorShellPage() {
           })}
         </p>
         <p>{t('editorShell.status.selected', { value: selectedLabel })}</p>
+        <p>
+          {t('editorShell.status.closure', {
+            closed: closedContours,
+            open: openContours,
+          })}
+        </p>
         <p>
           {t('editorShell.status.historyState', {
             undoCount: Math.max(historyState.past.length - 1, 0),

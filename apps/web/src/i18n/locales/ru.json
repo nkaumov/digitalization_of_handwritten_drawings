@@ -11,7 +11,10 @@
     "sidebar": {
       "ariaLabel": "Боковая панель редактора",
       "toolsTitle": "Панель инструментов",
-      "toolsPlaceholder": "Контролы инструментов и виджеты доменов будут подключены на следующих задачах этапа.",
+      "toolsPlaceholder": "Базовые операции ручного редактирования геометрии включены в каркасе этого этапа.",
+      "createLineAction": "Создать линию",
+      "connectPointsAction": "Соединить точки",
+      "deleteSegmentAction": "Удалить сегмент",
       "navigationTitle": "Навигация viewport",
       "navigationPlaceholder": "Перетаскивание двигает поле, колесо мыши масштабирует; кнопки доступны ниже.",
       "zoomInAction": "Приблизить",
@@ -21,16 +24,17 @@
     "workspace": {
       "ariaLabel": "Визуальное рабочее поле редактора",
       "title": "Рабочая область",
-      "subtitle": "В этом каркасе уже активны viewport-навигация, сетка, геометрические слои и выделение.",
-      "canvasAriaLabel": "Холст редактора",
-      "canvasPlaceholder": "Визуальное поле готово к подключению будущих SVG-слоев редактора"
+      "subtitle": "В этом каркасе активны viewport, сетка, геометрические слои и базовые действия редактирования.",
+      "canvasAriaLabel": "Холст редактора"
     },
     "selection": {
       "title": "Выделение",
-      "description": "Выделение точки и сегмента доступно в режиме только чтения.",
+      "description": "Выделение точки и сегмента доступно для базового редактирования геометрии.",
       "none": "Ничего не выбрано",
       "point": "Точка: contour={{contourId}}, id={{pointId}}",
       "segment": "Сегмент: contour={{contourId}}, id={{segmentId}}",
+      "twoPoints": "Выбраны точки: {{first}} и {{second}}",
+      "multiSelectHint": "Удерживайте Shift и кликайте по точкам, чтобы выбрать до двух точек.",
       "counts": "Контуры={{contours}}, точки={{points}}, сегменты={{segments}}"
     },
     "history": {
@@ -48,6 +52,7 @@
       "zoom": "Масштаб: {{value}}x",
       "viewportOffset": "Смещение viewport: x={{x}}, y={{y}}",
       "selected": "Выбрано: {{value}}",
+      "closure": "Замкнутость контуров: closed={{closed}}, open={{open}}",
       "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

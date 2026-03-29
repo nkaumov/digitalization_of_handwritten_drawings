@@ -11,7 +11,10 @@
     "sidebar": {
       "ariaLabel": "Editor sidebar",
       "toolsTitle": "Tools panel",
-      "toolsPlaceholder": "Tool controls and domain widgets will be connected in the next stage tasks.",
+      "toolsPlaceholder": "Basic manual geometry operations are enabled in this stage shell.",
+      "createLineAction": "Create line",
+      "connectPointsAction": "Connect points",
+      "deleteSegmentAction": "Delete segment",
       "navigationTitle": "Viewport navigation",
       "navigationPlaceholder": "Use drag for panning and mouse wheel for zoom; controls are available below.",
       "zoomInAction": "Zoom in",
@@ -21,16 +24,17 @@
     "workspace": {
       "ariaLabel": "Visual editor workspace",
       "title": "Working area",
-      "subtitle": "Viewport navigation, grid rendering, geometry layers, and selection are active in this shell.",
-      "canvasAriaLabel": "Editor canvas",
-      "canvasPlaceholder": "Visual field ready for future SVG editor layers"
+      "subtitle": "Viewport, grid, geometry layers, and basic editing interactions are active in this shell.",
+      "canvasAriaLabel": "Editor canvas"
     },
     "selection": {
       "title": "Selection",
-      "description": "Point and segment selection is available in read-only mode.",
+      "description": "Point and segment selection is available for basic geometry editing.",
       "none": "Nothing selected",
       "point": "Point: contour={{contourId}}, id={{pointId}}",
       "segment": "Segment: contour={{contourId}}, id={{segmentId}}",
+      "twoPoints": "Selected points: {{first}} and {{second}}",
+      "multiSelectHint": "Hold Shift and click points to select up to two points.",
       "counts": "Contours={{contours}}, points={{points}}, segments={{segments}}"
     },
     "history": {
@@ -48,6 +52,7 @@
       "zoom": "Zoom: {{value}}x",
       "viewportOffset": "Viewport offset: x={{x}}, y={{y}}",
       "selected": "Selected: {{value}}",
+      "closure": "Contour closure: closed={{closed}}, open={{open}}",
       "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

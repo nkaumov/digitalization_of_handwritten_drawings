@@ -1,23 +1,77 @@
-﻿import type { GeometryScene } from '@/domains/geometry';
+﻿import { useRef, type PointerEvent } from 'react';
+
+import {
+  GEOMETRY_CANVAS_HEIGHT,
+  GEOMETRY_CANVAS_WIDTH,
+  type GeometryScene,
+} from '@/domains/geometry';
 import type { SelectionState } from '@/domains/selection';
+
+interface DragPointState {
+  contourId: string;
+  pointId: string;
+  pointerId: number;
+}
 
 interface GeometryLayerProps {
   scene: GeometryScene;
   selection: SelectionState;
-  onPointSelect: (contourId: string, pointId: string) => void;
+  onPointSelect: (contourId: string, pointId: string, isMultiSelect: boolean) => void;
+  onPointMove: (contourId: string, pointId: string, x: number, y: number) => void;
   onSegmentSelect: (contourId: string, segmentId: string) => void;
 }
 
-export function GeometryLayer({ scene, selection, onPointSelect, onSegmentSelect }: GeometryLayerProps) {
+function toSvgCoordinates(event: PointerEvent<SVGSVGElement>): { x: number; y: number } {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / rect.width) * GEOMETRY_CANVAS_WIDTH;
+  const y = ((event.clientY - rect.top) / rect.height) * GEOMETRY_CANVAS_HEIGHT;
+
+  return {
+    x: Math.max(0, Math.min(GEOMETRY_CANVAS_WIDTH, x)),
+    y: Math.max(0, Math.min(GEOMETRY_CANVAS_HEIGHT, y)),
+  };
+}
+
+export function GeometryLayer({
+  scene,
+  selection,
+  onPointSelect,
+  onPointMove,
+  onSegmentSelect,
+}: GeometryLayerProps) {
+  const dragStateRef = useRef<DragPointState | null>(null);
+
+  const handleSvgPointerMove = (event: PointerEvent<SVGSVGElement>) => {
+    const dragState = dragStateRef.current;
+    if (!dragState) {
+      return;
+    }
+
+    const coords = toSvgCoordinates(event);
+    onPointMove(dragState.contourId, dragState.pointId, coords.x, coords.y);
+    event.stopPropagation();
+  };
+
+  const handleSvgPointerUp = () => {
+    dragStateRef.current = null;
+  };
+
   return (
-    <svg className="editor-shell__geometry" viewBox="0 0 640 360" aria-hidden="true">
+    <svg
+      className="editor-shell__geometry"
+      viewBox={`0 0 ${GEOMETRY_CANVAS_WIDTH} ${GEOMETRY_CANVAS_HEIGHT}`}
+      aria-hidden="true"
+      onPointerMove={handleSvgPointerMove}
+      onPointerUp={handleSvgPointerUp}
+      onPointerCancel={handleSvgPointerUp}
+      onPointerLeave={handleSvgPointerUp}
+    >
       {scene.contours.map((contourScene) => (
         <g key={contourScene.contour.id}>
           {contourScene.segments.map((segmentNode) => {
             const selected =
-              selection.target?.kind === 'segment' &&
-              selection.target.contourId === segmentNode.contourId &&
-              selection.target.segmentId === segmentNode.segment.id;
+              selection.segment?.contourId === segmentNode.contourId &&
+              selection.segment.segmentId === segmentNode.segment.id;
 
             return (
               <line
@@ -37,10 +91,10 @@ export function GeometryLayer({ scene, selection, onPointSelect, onSegmentSelect
           })}
 
           {contourScene.points.map((pointNode) => {
-            const selected =
-              selection.target?.kind === 'point' &&
-              selection.target.contourId === pointNode.contourId &&
-              selection.target.pointId === pointNode.point.id;
+            const selected = selection.points.some(
+              (point) =>
+                point.contourId === pointNode.contourId && point.pointId === pointNode.point.id,
+            );
 
             return (
               <circle
@@ -52,7 +106,19 @@ export function GeometryLayer({ scene, selection, onPointSelect, onSegmentSelect
                 r={5}
                 onPointerDown={(event) => {
                   event.stopPropagation();
-                  onPointSelect(pointNode.contourId, pointNode.point.id);
+                  dragStateRef.current = {
+                    contourId: pointNode.contourId,
+                    pointId: pointNode.point.id,
+                    pointerId: event.pointerId,
+                  };
+
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  onPointSelect(pointNode.contourId, pointNode.point.id, event.shiftKey);
+                }}
+                onPointerUp={(event) => {
+                  if (dragStateRef.current?.pointerId === event.pointerId) {
+                    dragStateRef.current = null;
+                  }
                 }}
               />
             );

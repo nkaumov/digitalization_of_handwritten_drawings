@@ -5,15 +5,21 @@ import {
   clearSelection,
   isPointSelected,
   isSegmentSelected,
-  selectPoint,
+  selectPointExclusive,
   selectSegment,
+  togglePointInSelection,
+  type PointSelectionTarget,
+  type SegmentSelectionTarget,
   type SelectionState,
 } from '@/domains/selection';
 
 export interface GeometrySelectionApi {
   selection: SelectionState;
+  selectedPoints: PointSelectionTarget[];
+  selectedSegment: SegmentSelectionTarget | null;
   clear: () => void;
-  selectPoint: (contourId: string, pointId: string) => void;
+  selectPointExclusive: (contourId: string, pointId: string) => void;
+  togglePoint: (contourId: string, pointId: string) => void;
   selectSegment: (contourId: string, segmentId: string) => void;
   isPointSelected: (contourId: string, pointId: string) => boolean;
   isSegmentSelected: (contourId: string, segmentId: string) => boolean;
@@ -25,8 +31,13 @@ export function useGeometrySelection(): GeometrySelectionApi {
   return useMemo(
     () => ({
       selection,
+      selectedPoints: selection.points,
+      selectedSegment: selection.segment,
       clear: () => setSelection(clearSelection()),
-      selectPoint: (contourId: string, pointId: string) => setSelection(selectPoint(contourId, pointId)),
+      selectPointExclusive: (contourId: string, pointId: string) =>
+        setSelection(selectPointExclusive(contourId, pointId)),
+      togglePoint: (contourId: string, pointId: string) =>
+        setSelection((current) => togglePointInSelection(current, contourId, pointId)),
       selectSegment: (contourId: string, segmentId: string) =>
         setSelection(selectSegment(contourId, segmentId)),
       isPointSelected: (contourId: string, pointId: string) =>
