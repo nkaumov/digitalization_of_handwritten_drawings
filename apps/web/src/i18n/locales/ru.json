@@ -1,0 +1,32 @@
+{
+  "app": {
+    "title": "Drawing Editor MVP",
+    "subtitle": "Каркас frontend"
+  },
+  "layout": {
+    "header": "Шапка",
+    "sidebar": "Боковая панель",
+    "editor": "Область редактора",
+    "status": "Статус-бар"
+  },
+  "sections": {
+    "headerPlaceholder": "Заглушка верхних элементов управления",
+    "sidebarPlaceholder": "Заглушка панели инструментов и сущностей",
+    "editorPlaceholder": "Заглушка рабочей области редактора",
+    "statusPlaceholder": "Заглушка статуса окружения и интеграций"
+  },
+  "language": {
+    "label": "Язык",
+    "ru": "Русский",
+    "en": "Английский"
+  },
+  "status": {
+    "api": "API: {{url}}",
+    "locale": "Локаль: {{locale}}"
+  },
+  "errors": {
+    "title": "Неожиданная ошибка интерфейса",
+    "description": "Перезагрузите страницу или сбросьте экран.",
+    "action": "Сбросить экран"
+  }
+}

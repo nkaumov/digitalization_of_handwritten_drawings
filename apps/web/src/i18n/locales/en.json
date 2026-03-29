@@ -1,0 +1,32 @@
+{
+  "app": {
+    "title": "Drawing Editor MVP",
+    "subtitle": "Frontend skeleton"
+  },
+  "layout": {
+    "header": "Header",
+    "sidebar": "Sidebar",
+    "editor": "Editor Area",
+    "status": "Status Bar"
+  },
+  "sections": {
+    "headerPlaceholder": "Top application controls placeholder",
+    "sidebarPlaceholder": "Tools and entities panel placeholder",
+    "editorPlaceholder": "Editor canvas placeholder",
+    "statusPlaceholder": "Runtime and integration status placeholder"
+  },
+  "language": {
+    "label": "Language",
+    "ru": "Russian",
+    "en": "English"
+  },
+  "status": {
+    "api": "API: {{url}}",
+    "locale": "Locale: {{locale}}"
+  },
+  "errors": {
+    "title": "Unexpected UI error",
+    "description": "Reload the page or reset this screen.",
+    "action": "Reset view"
+  }
+}

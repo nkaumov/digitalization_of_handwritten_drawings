@@ -4,12 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node -e \"console.log('web scaffold: no editor implementation yet')\"",
-    "build": "node -e \"console.log('web scaffold build placeholder')\"",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "node -e \"console.log('web scaffold lint placeholder')\""
   },
   "dependencies": {
-    "@contracts": "workspace:*"
+    "@contracts": "workspace:*",
+    "i18next": "^25.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-i18next": "^15.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.6"
   }
 }
