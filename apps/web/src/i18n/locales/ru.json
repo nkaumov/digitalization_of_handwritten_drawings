@@ -1,32 +1,48 @@
-{
+﻿{
   "app": {
     "title": "Drawing Editor MVP",
     "subtitle": "Каркас frontend"
   },
-  "layout": {
-    "header": "Шапка",
-    "sidebar": "Боковая панель",
-    "editor": "Область редактора",
-    "status": "Статус-бар"
-  },
-  "sections": {
-    "headerPlaceholder": "Заглушка верхних элементов управления",
-    "sidebarPlaceholder": "Заглушка панели инструментов и сущностей",
-    "editorPlaceholder": "Заглушка рабочей области редактора",
-    "statusPlaceholder": "Заглушка статуса окружения и интеграций"
+  "editorShell": {
+    "header": {
+      "ariaLabel": "Шапка приложения",
+      "subtitle": "Каркас страницы редактора этапа 6 без AI-интеграции"
+    },
+    "sidebar": {
+      "ariaLabel": "Боковая панель редактора",
+      "toolsTitle": "Панель инструментов",
+      "toolsPlaceholder": "Контролы инструментов и виджеты доменов будут подключены на следующих задачах этапа."
+    },
+    "workspace": {
+      "ariaLabel": "Визуальное рабочее поле редактора",
+      "title": "Рабочая область",
+      "subtitle": "Слои viewport, grid и geometry пока представлены заглушками каркаса.",
+      "canvasAriaLabel": "Заглушка холста редактора",
+      "canvasPlaceholder": "Визуальное поле готово к подключению будущих SVG-слоев редактора"
+    },
+    "history": {
+      "ariaLabel": "История действий",
+      "title": "Архитектурная точка истории",
+      "placeholder": "Точка интеграции undo/redo инициализирована, привязка действий будет добавлена позже.",
+      "undoAction": "Отменить",
+      "redoAction": "Повторить"
+    },
+    "status": {
+      "ariaLabel": "Строка статуса редактора",
+      "title": "Статус",
+      "api": "API: {{url}}",
+      "locale": "Локаль: {{locale}}",
+      "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
+    }
   },
   "language": {
     "label": "Язык",
     "ru": "Русский",
     "en": "Английский"
   },
-  "status": {
-    "api": "API: {{url}}",
-    "locale": "Локаль: {{locale}}"
-  },
   "errors": {
     "title": "Неожиданная ошибка интерфейса",
-    "description": "Перезагрузите страницу или сбросьте экран.",
+    "description": "Перезагрузите страницу или сбросьте этот экран.",
     "action": "Сбросить экран"
   }
 }

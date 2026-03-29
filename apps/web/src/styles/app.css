@@ -1,7 +1,7 @@
-:root {
+﻿:root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #111827;
-  background: #f3f4f6;
+  color: #14213d;
+  background: #e6ebf2;
 }
 
 * {
@@ -17,70 +17,125 @@ body {
   min-height: 100vh;
 }
 
-.app-shell {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  grid-template-rows: auto 1fr auto;
+.editor-shell {
   min-height: 100vh;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  background:
+    radial-gradient(circle at 10% 20%, #ffffffaa 0, #ffffff00 38%),
+    linear-gradient(180deg, #e9eef6 0%, #dbe3ef 100%);
 }
 
-.app-header {
+.editor-shell__header {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   padding: 16px 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #d1d5db;
+  background: #f7f9fd;
+  border-bottom: 1px solid #c7d2e2;
 }
 
-.app-header h1,
-.app-header p,
-.app-sidebar h2,
-.app-sidebar p,
-.app-editor h2,
-.app-editor p,
-.app-status h2,
-.app-status p {
+.editor-shell__title-wrap h1,
+.editor-shell__title-wrap p,
+.editor-shell__panel h2,
+.editor-shell__panel p,
+.editor-shell__workspace-header h2,
+.editor-shell__workspace-header p,
+.editor-shell__status h2,
+.editor-shell__status p,
+.editor-shell__canvas-overlay p {
   margin: 0;
 }
 
-.placeholder-note {
-  color: #6b7280;
+.editor-shell__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.app-sidebar {
+.editor-shell__title-wrap p {
+  color: #405072;
+}
+
+.editor-shell__sidebar {
+  border-right: 1px solid #c7d2e2;
   padding: 16px;
-  background: #e5e7eb;
-  border-right: 1px solid #d1d5db;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+  background: #edf2f9;
 }
 
-.app-editor {
-  padding: 20px;
+.editor-shell__panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: repeating-linear-gradient(
-    0deg,
-    #f9fafb,
-    #f9fafb 23px,
-    #e5e7eb 24px
-  );
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d0dae8;
+  border-radius: 12px;
+  background: #f8fbff;
 }
 
-.app-status {
-  grid-column: 1 / -1;
-  padding: 12px 20px;
-  background: #ffffff;
-  border-top: 1px solid #d1d5db;
+.editor-shell__history-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.editor-shell__workspace {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.editor-shell__workspace-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-shell__workspace-header p {
+  color: #415174;
+}
+
+.editor-shell__canvas {
+  position: relative;
+  min-height: 480px;
+  border: 1px solid #b7c5da;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, #cad6e780 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(0deg, #cad6e780 1px, transparent 1px) 0 0 / 32px 32px,
+    #fdfefe;
+  box-shadow: inset 0 0 0 1px #ffffffb3;
+}
+
+.editor-shell__canvas-overlay {
+  position: absolute;
+  inset: 16px;
+  border: 1px dashed #8ca0bf;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: center;
+  text-align: center;
+  color: #35476c;
+  background: #ffffffb3;
+  padding: 20px;
+}
+
+.editor-shell__status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
   flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 20px;
+  border-top: 1px solid #c7d2e2;
+  background: #f6f9fe;
 }
 
 .language-switcher {
@@ -94,18 +149,24 @@ body {
 }
 
 .language-switcher button,
-.error-view button {
-  border: 1px solid #9ca3af;
+.error-view button,
+.editor-shell__history-actions button {
+  border: 1px solid #9fb0cb;
   background: #ffffff;
-  color: #111827;
+  color: #0f1f3a;
   border-radius: 8px;
   padding: 6px 10px;
   cursor: pointer;
 }
 
+.editor-shell__history-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .language-switcher button.is-active {
-  background: #1f2937;
-  border-color: #1f2937;
+  background: #1c3f79;
+  border-color: #1c3f79;
   color: #ffffff;
 }
 
@@ -125,17 +186,21 @@ body {
 }
 
 @media (max-width: 960px) {
-  .app-shell {
+  .editor-shell {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto 1fr auto;
   }
 
-  .app-sidebar {
+  .editor-shell__sidebar {
     border-right: none;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: 1px solid #c7d2e2;
   }
 
-  .app-header {
+  .editor-shell__canvas {
+    min-height: 360px;
+  }
+
+  .editor-shell__header {
     flex-wrap: wrap;
   }
 }

@@ -1,28 +1,44 @@
-{
+﻿{
   "app": {
     "title": "Drawing Editor MVP",
-    "subtitle": "Frontend skeleton"
+    "subtitle": "Frontend shell"
   },
-  "layout": {
-    "header": "Header",
-    "sidebar": "Sidebar",
-    "editor": "Editor Area",
-    "status": "Status Bar"
-  },
-  "sections": {
-    "headerPlaceholder": "Top application controls placeholder",
-    "sidebarPlaceholder": "Tools and entities panel placeholder",
-    "editorPlaceholder": "Editor canvas placeholder",
-    "statusPlaceholder": "Runtime and integration status placeholder"
+  "editorShell": {
+    "header": {
+      "ariaLabel": "Application header",
+      "subtitle": "Stage 6 editor page shell without AI integration"
+    },
+    "sidebar": {
+      "ariaLabel": "Editor sidebar",
+      "toolsTitle": "Tools panel",
+      "toolsPlaceholder": "Tool controls and domain widgets will be connected in the next stage tasks."
+    },
+    "workspace": {
+      "ariaLabel": "Visual editor workspace",
+      "title": "Working area",
+      "subtitle": "Viewport, grid, and geometry layers are placeholders in this shell.",
+      "canvasAriaLabel": "Editor canvas placeholder",
+      "canvasPlaceholder": "Visual field ready for future SVG editor layers"
+    },
+    "history": {
+      "ariaLabel": "Action history",
+      "title": "History architecture point",
+      "placeholder": "Undo/redo integration point is initialized; action wiring is pending.",
+      "undoAction": "Undo",
+      "redoAction": "Redo"
+    },
+    "status": {
+      "ariaLabel": "Editor status bar",
+      "title": "Status",
+      "api": "API: {{url}}",
+      "locale": "Locale: {{locale}}",
+      "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
+    }
   },
   "language": {
     "label": "Language",
     "ru": "Russian",
     "en": "English"
-  },
-  "status": {
-    "api": "API: {{url}}",
-    "locale": "Locale: {{locale}}"
   },
   "errors": {
     "title": "Unexpected UI error",
