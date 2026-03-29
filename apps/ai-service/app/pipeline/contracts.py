@@ -60,3 +60,16 @@ class PipelineContext(TypedDict, total=False):
     debug_artifacts: List[DebugArtifact]
     stage_trace: List[PipelineStageName]
     meta: Dict[str, Any]
+    runtime: "PipelineRuntimeContext"
+
+
+class PipelineRuntimeContext(TypedDict, total=False):
+    chain_id: str
+    run_id: str
+    triggered_by: str
+    continue_on_stage_failure: bool
+    stage_count: int
+    started_at_iso: str
+    current_stage: PipelineStageName
+    current_stage_index: int
+    current_stage_started_at_iso: str

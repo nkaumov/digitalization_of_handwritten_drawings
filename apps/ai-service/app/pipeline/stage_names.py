@@ -10,3 +10,14 @@ PipelineStageName = Literal[
     "normalize-units",
     "assemble-result",
 ]
+
+PIPELINE_STAGE_ORDER: tuple[PipelineStageName, ...] = (
+    "normalize-image",
+    "detect-lines",
+    "detect-text",
+    "parse-dimensions",
+    "build-graph",
+    "find-contours",
+    "normalize-units",
+    "assemble-result",
+)

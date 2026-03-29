@@ -1,4 +1,5 @@
 from app.pipeline.manager import PipelineManager
+from app.pipeline.hooks_registry import build_placeholder_hook_manager
 from app.pipeline.stages.registry import build_placeholder_stage_registry
 from app.pipeline.types import PipelineStageResult
 
@@ -7,7 +8,10 @@ class PipelineRunner:
     """Facade runner using the pipeline manager with placeholder stage registry."""
 
     def __init__(self) -> None:
-        self._manager = PipelineManager(build_placeholder_stage_registry())
+        self._manager = PipelineManager(
+            build_placeholder_stage_registry(),
+            hook_manager=build_placeholder_hook_manager(),
+        )
 
     def run(self, image_path: str) -> PipelineStageResult:
         context = {
