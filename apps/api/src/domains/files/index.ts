@@ -1,12 +1,10 @@
-export interface FilesDomainModule {
-  readonly domain: 'files';
-  register(): void;
-}
+import type { ApiDomainModule } from '@/domains/contracts';
 
-export function createFilesDomainModule(): FilesDomainModule {
+export function createFilesDomainModule(): ApiDomainModule {
   return {
-    domain: 'files',
-    register() {
+    name: 'files',
+    moduleId: 'api.domains.files',
+    register(_context) {
       // Stage 4 placeholder: module registration point only.
     },
   };

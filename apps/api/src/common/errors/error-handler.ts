@@ -38,12 +38,14 @@ export function registerErrorHandlers(app: FastifyInstance) {
       return;
     }
 
-    const statusCode =
-      typeof (error as { statusCode?: unknown }).statusCode === 'number'
-        ? (error as { statusCode: number }).statusCode
-        : 500;
-
-    const message = statusCode >= 500 ? 'Internal Server Error' : error.message;
+    const unknownError = error as { statusCode?: unknown; message?: unknown };
+    const statusCode = typeof unknownError.statusCode === 'number' ? unknownError.statusCode : 500;
+    const message =
+      statusCode >= 500
+        ? 'Internal Server Error'
+        : typeof unknownError.message === 'string'
+          ? unknownError.message
+          : 'Unexpected error';
 
     request.log.error({ err: error }, 'Unhandled API error');
 
