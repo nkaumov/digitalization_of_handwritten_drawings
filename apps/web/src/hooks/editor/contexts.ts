@@ -1,4 +1,4 @@
-import type { EditorHookName } from './hook-names';
+import type { EditorHookArea, EditorHookName, EditorHookPhase } from './hook-names';
 import type {
   DrawingLoadPayload,
   DrawingSavePayload,
@@ -14,6 +14,21 @@ export interface BaseEditorHookContext<TPayload> {
   domain?: string;
   payload: TPayload;
   meta?: Record<string, unknown>;
+  runtime?: EditorHookRuntimeContext;
+}
+
+export interface EditorHookRuntimeContext {
+  chainId: string;
+  callId: string;
+  hookName: EditorHookName;
+  hookPhase: EditorHookPhase;
+  hookArea: EditorHookArea;
+  operation: 'load' | 'create' | 'update' | 'delete' | 'save' | 'export';
+  sequence: number;
+  totalInChain: number;
+  triggeredBy: string;
+  startedAtIso: string;
+  continueOnSafeFailure: boolean;
 }
 
 export type BeforeDrawingLoadContext = BaseEditorHookContext<DrawingLoadPayload>;

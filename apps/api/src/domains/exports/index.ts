@@ -1,12 +1,10 @@
-export interface ExportsDomainModule {
-  readonly domain: 'exports';
-  register(): void;
-}
+import type { ApiDomainModule } from '@/domains/contracts';
 
-export function createExportsDomainModule(): ExportsDomainModule {
+export function createExportsDomainModule(): ApiDomainModule {
   return {
-    domain: 'exports',
-    register() {
+    name: 'exports',
+    moduleId: 'api.domains.exports',
+    register(_context) {
       // Stage 4 placeholder: module registration point only.
     },
   };

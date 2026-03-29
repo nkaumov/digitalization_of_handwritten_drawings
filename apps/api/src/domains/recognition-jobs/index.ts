@@ -1,12 +1,10 @@
-export interface RecognitionJobsDomainModule {
-  readonly domain: 'recognition-jobs';
-  register(): void;
-}
+import type { ApiDomainModule } from '@/domains/contracts';
 
-export function createRecognitionJobsDomainModule(): RecognitionJobsDomainModule {
+export function createRecognitionJobsDomainModule(): ApiDomainModule {
   return {
-    domain: 'recognition-jobs',
-    register() {
+    name: 'recognition-jobs',
+    moduleId: 'api.domains.recognition-jobs',
+    register(_context) {
       // Stage 4 placeholder: module registration point only.
     },
   };
