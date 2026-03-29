@@ -26,6 +26,7 @@ StageHandler = Callable[[PipelineStageInput], PipelineStageOutput]
 class PipelineStageError:
     stage: PipelineStageName
     message: str
+    safe_failure: bool = True
     details: str | None = None
 
 

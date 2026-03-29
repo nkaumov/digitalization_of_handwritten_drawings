@@ -1,5 +1,6 @@
 import type { EditorHookContextByName } from './contexts';
 import type { EditorHookName } from './hook-names';
+import type { HookLogger } from './logger';
 
 export type EditorHookHandler<TName extends EditorHookName = EditorHookName> = (
   context: EditorHookContextByName[TName],
@@ -25,4 +26,6 @@ export type HookErrorListener = (error: HookExecutionError) => void;
 
 export interface EditorHookManagerOptions {
   onError?: HookErrorListener;
+  continueOnSafeFailure?: boolean;
+  logger?: HookLogger;
 }
