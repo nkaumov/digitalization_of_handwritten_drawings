@@ -1,1 +1,1 @@
-"""Pipeline stage placeholders."""
+"""AI pipeline stage domains package."""
