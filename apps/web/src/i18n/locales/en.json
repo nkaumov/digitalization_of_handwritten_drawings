@@ -11,12 +11,17 @@
     "sidebar": {
       "ariaLabel": "Editor sidebar",
       "toolsTitle": "Tools panel",
-      "toolsPlaceholder": "Tool controls and domain widgets will be connected in the next stage tasks."
+      "toolsPlaceholder": "Tool controls and domain widgets will be connected in the next stage tasks.",
+      "navigationTitle": "Viewport navigation",
+      "navigationPlaceholder": "Use drag for panning and mouse wheel for zoom; controls are available below.",
+      "zoomInAction": "Zoom in",
+      "zoomOutAction": "Zoom out",
+      "resetViewAction": "Reset view"
     },
     "workspace": {
       "ariaLabel": "Visual editor workspace",
       "title": "Working area",
-      "subtitle": "Viewport, grid, and geometry layers are placeholders in this shell.",
+      "subtitle": "Viewport navigation, grid rendering, and zoom are active in this shell.",
       "canvasAriaLabel": "Editor canvas placeholder",
       "canvasPlaceholder": "Visual field ready for future SVG editor layers"
     },
@@ -32,6 +37,8 @@
       "title": "Status",
       "api": "API: {{url}}",
       "locale": "Locale: {{locale}}",
+      "zoom": "Zoom: {{value}}x",
+      "viewportOffset": "Viewport offset: x={{x}}, y={{y}}",
       "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

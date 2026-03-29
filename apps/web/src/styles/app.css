@@ -82,6 +82,7 @@ body {
 .editor-shell__history-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .editor-shell__workspace {
@@ -104,6 +105,7 @@ body {
 .editor-shell__canvas {
   position: relative;
   min-height: 480px;
+  overflow: hidden;
   border: 1px solid #b7c5da;
   border-radius: 14px;
   background:
@@ -111,11 +113,19 @@ body {
     linear-gradient(0deg, #cad6e780 1px, transparent 1px) 0 0 / 32px 32px,
     #fdfefe;
   box-shadow: inset 0 0 0 1px #ffffffb3;
+  cursor: grab;
+  touch-action: none;
+}
+
+.editor-shell__canvas:active {
+  cursor: grabbing;
 }
 
 .editor-shell__canvas-overlay {
   position: absolute;
-  inset: 16px;
+  inset: 24px;
+  width: 520px;
+  height: 320px;
   border: 1px dashed #8ca0bf;
   border-radius: 10px;
   display: flex;

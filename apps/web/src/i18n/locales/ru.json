@@ -11,12 +11,17 @@
     "sidebar": {
       "ariaLabel": "Боковая панель редактора",
       "toolsTitle": "Панель инструментов",
-      "toolsPlaceholder": "Контролы инструментов и виджеты доменов будут подключены на следующих задачах этапа."
+      "toolsPlaceholder": "Контролы инструментов и виджеты доменов будут подключены на следующих задачах этапа.",
+      "navigationTitle": "Навигация viewport",
+      "navigationPlaceholder": "Перетаскивание двигает поле, колесо мыши масштабирует; кнопки доступны ниже.",
+      "zoomInAction": "Приблизить",
+      "zoomOutAction": "Отдалить",
+      "resetViewAction": "Сбросить вид"
     },
     "workspace": {
       "ariaLabel": "Визуальное рабочее поле редактора",
       "title": "Рабочая область",
-      "subtitle": "Слои viewport, grid и geometry пока представлены заглушками каркаса.",
+      "subtitle": "В этом каркасе уже активны viewport-навигация, сетка и экранный зум.",
       "canvasAriaLabel": "Заглушка холста редактора",
       "canvasPlaceholder": "Визуальное поле готово к подключению будущих SVG-слоев редактора"
     },
@@ -32,6 +37,8 @@
       "title": "Статус",
       "api": "API: {{url}}",
       "locale": "Локаль: {{locale}}",
+      "zoom": "Масштаб: {{value}}x",
+      "viewportOffset": "Смещение viewport: x={{x}}, y={{y}}",
       "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
     }
   },
