@@ -14,6 +14,7 @@ export interface EnvConfig {
   DB_USER: string;
   DB_PASSWORD: string;
   DB_NAME: string;
+  STORAGE_UPLOADS_DIR: string;
 }
 
 function isLogLevel(value: string): value is LogLevel {
@@ -62,6 +63,7 @@ function loadEnv(): EnvConfig {
     DB_USER: process.env.DB_USER ?? 'root',
     DB_PASSWORD: process.env.DB_PASSWORD ?? '',
     DB_NAME: process.env.DB_NAME ?? 'digitalization_of_handwritten_drawings',
+    STORAGE_UPLOADS_DIR: process.env.STORAGE_UPLOADS_DIR ?? 'storage/uploads',
   };
 }
 
