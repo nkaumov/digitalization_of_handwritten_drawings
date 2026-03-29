@@ -21,9 +21,17 @@
     "workspace": {
       "ariaLabel": "Visual editor workspace",
       "title": "Working area",
-      "subtitle": "Viewport navigation, grid rendering, and zoom are active in this shell.",
-      "canvasAriaLabel": "Editor canvas placeholder",
+      "subtitle": "Viewport navigation, grid rendering, geometry layers, and selection are active in this shell.",
+      "canvasAriaLabel": "Editor canvas",
       "canvasPlaceholder": "Visual field ready for future SVG editor layers"
+    },
+    "selection": {
+      "title": "Selection",
+      "description": "Point and segment selection is available in read-only mode.",
+      "none": "Nothing selected",
+      "point": "Point: contour={{contourId}}, id={{pointId}}",
+      "segment": "Segment: contour={{contourId}}, id={{segmentId}}",
+      "counts": "Contours={{contours}}, points={{points}}, segments={{segments}}"
     },
     "history": {
       "ariaLabel": "Action history",
@@ -39,6 +47,7 @@
       "locale": "Locale: {{locale}}",
       "zoom": "Zoom: {{value}}x",
       "viewportOffset": "Viewport offset: x={{x}}, y={{y}}",
+      "selected": "Selected: {{value}}",
       "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

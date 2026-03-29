@@ -39,6 +39,11 @@ export function useViewportNavigation(): ViewportNavigationResult {
   const grid = useMemo(() => computeGridVisualState(viewport), [viewport]);
 
   const onPointerDown = useCallback((event: PointerEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('[data-interactive="true"]')) {
+      return;
+    }
+
     if (event.button !== 0) {
       return;
     }

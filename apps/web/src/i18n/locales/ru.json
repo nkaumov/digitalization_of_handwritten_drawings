@@ -21,9 +21,17 @@
     "workspace": {
       "ariaLabel": "Визуальное рабочее поле редактора",
       "title": "Рабочая область",
-      "subtitle": "В этом каркасе уже активны viewport-навигация, сетка и экранный зум.",
-      "canvasAriaLabel": "Заглушка холста редактора",
+      "subtitle": "В этом каркасе уже активны viewport-навигация, сетка, геометрические слои и выделение.",
+      "canvasAriaLabel": "Холст редактора",
       "canvasPlaceholder": "Визуальное поле готово к подключению будущих SVG-слоев редактора"
+    },
+    "selection": {
+      "title": "Выделение",
+      "description": "Выделение точки и сегмента доступно в режиме только чтения.",
+      "none": "Ничего не выбрано",
+      "point": "Точка: contour={{contourId}}, id={{pointId}}",
+      "segment": "Сегмент: contour={{contourId}}, id={{segmentId}}",
+      "counts": "Контуры={{contours}}, точки={{points}}, сегменты={{segments}}"
     },
     "history": {
       "ariaLabel": "История действий",
@@ -39,6 +47,7 @@
       "locale": "Локаль: {{locale}}",
       "zoom": "Масштаб: {{value}}x",
       "viewportOffset": "Смещение viewport: x={{x}}, y={{y}}",
+      "selected": "Выбрано: {{value}}",
       "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

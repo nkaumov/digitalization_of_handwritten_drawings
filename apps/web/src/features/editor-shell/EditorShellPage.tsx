@@ -1,9 +1,12 @@
-﻿import { useMemo } from 'react';
+﻿import { useMemo, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { buildGeometryScene } from '@/domains/geometry';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useAppConfig } from '@/config/ConfigProvider';
 import { createEditorHistoryManager } from '@/features/editor-shell/history';
+import { editorShellMockDrawing } from '@/features/editor-shell/mockDrawing';
+import { useGeometrySelection } from '@/features/editor-shell/useGeometrySelection';
 import { ViewportCanvas } from '@/features/editor-shell/ViewportCanvas';
 import { useViewportNavigation } from '@/features/editor-shell/viewport';
 
@@ -12,8 +15,37 @@ export function EditorShellPage() {
   const config = useAppConfig();
   const historyManager = useMemo(() => createEditorHistoryManager(), []);
   const navigation = useViewportNavigation();
+  const geometryScene = useMemo(() => buildGeometryScene(editorShellMockDrawing), []);
+  const selectionApi = useGeometrySelection();
 
   const historyState = historyManager.getState();
+
+  const selectedLabel = useMemo(() => {
+    if (!selectionApi.selection.target) {
+      return t('editorShell.selection.none');
+    }
+
+    if (selectionApi.selection.target.kind === 'point') {
+      return t('editorShell.selection.point', {
+        contourId: selectionApi.selection.target.contourId,
+        pointId: selectionApi.selection.target.pointId,
+      });
+    }
+
+    return t('editorShell.selection.segment', {
+      contourId: selectionApi.selection.target.contourId,
+      segmentId: selectionApi.selection.target.segmentId,
+    });
+  }, [selectionApi.selection.target, t]);
+
+  const handleCanvasPointerDown = (event: PointerEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('[data-interactive="true"]')) {
+      selectionApi.clear();
+    }
+
+    navigation.onPointerDown(event);
+  };
 
   return (
     <div className="editor-shell">
@@ -47,6 +79,19 @@ export function EditorShellPage() {
           </div>
         </section>
 
+        <section className="editor-shell__panel">
+          <h2>{t('editorShell.selection.title')}</h2>
+          <p>{t('editorShell.selection.description')}</p>
+          <p>{selectedLabel}</p>
+          <p>
+            {t('editorShell.selection.counts', {
+              contours: geometryScene.contours.length,
+              points: geometryScene.points.length,
+              segments: geometryScene.segments.length,
+            })}
+          </p>
+        </section>
+
         <section className="editor-shell__panel" aria-label={t('editorShell.history.ariaLabel')}>
           <h2>{t('editorShell.history.title')}</h2>
           <p>{t('editorShell.history.placeholder')}</p>
@@ -71,7 +116,11 @@ export function EditorShellPage() {
           t={t}
           viewport={navigation.viewport}
           grid={navigation.grid}
-          onPointerDown={navigation.onPointerDown}
+          scene={geometryScene}
+          selection={selectionApi.selection}
+          onPointSelect={selectionApi.selectPoint}
+          onSegmentSelect={selectionApi.selectSegment}
+          onPointerDown={handleCanvasPointerDown}
           onPointerMove={navigation.onPointerMove}
           onPointerUp={navigation.onPointerUp}
           onPointerLeave={navigation.onPointerLeave}
@@ -90,6 +139,7 @@ export function EditorShellPage() {
             y: Math.round(navigation.viewport.offsetY),
           })}
         </p>
+        <p>{t('editorShell.status.selected', { value: selectedLabel })}</p>
         <p>
           {t('editorShell.status.historyState', {
             undoCount: Math.max(historyState.past.length - 1, 0),

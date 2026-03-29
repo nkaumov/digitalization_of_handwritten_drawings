@@ -1,7 +1,10 @@
 ﻿import type { TFunction } from 'i18next';
 import type { PointerEvent, WheelEvent } from 'react';
 
+import type { GeometryScene } from '@/domains/geometry';
+import type { SelectionState } from '@/domains/selection';
 import type { ViewportState } from '@/domains/viewport';
+import { GeometryLayer } from '@/features/editor-shell/GeometryLayer';
 
 interface ViewportCanvasProps {
   t: TFunction;
@@ -10,6 +13,10 @@ interface ViewportCanvasProps {
     backgroundSize: string;
     backgroundPosition: string;
   };
+  scene: GeometryScene;
+  selection: SelectionState;
+  onPointSelect: (contourId: string, pointId: string) => void;
+  onSegmentSelect: (contourId: string, segmentId: string) => void;
   onPointerDown: (event: PointerEvent<HTMLElement>) => void;
   onPointerMove: (event: PointerEvent<HTMLElement>) => void;
   onPointerUp: () => void;
@@ -21,6 +28,10 @@ export function ViewportCanvas({
   t,
   viewport,
   grid,
+  scene,
+  selection,
+  onPointSelect,
+  onSegmentSelect,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -48,7 +59,12 @@ export function ViewportCanvas({
           transformOrigin: '0 0',
         }}
       >
-        <p>{t('editorShell.workspace.canvasPlaceholder')}</p>
+        <GeometryLayer
+          scene={scene}
+          selection={selection}
+          onPointSelect={onPointSelect}
+          onSegmentSelect={onSegmentSelect}
+        />
       </div>
     </section>
   );
