@@ -24,3 +24,24 @@ frontend (`apps/web`), backend (`apps/api`), ai-service (`apps/ai-service`).
 - Добавлены `.env.example` для root и сервисов.
 - Добавлены root-скрипты запуска и проверок (`dev:*`, `dev:all`, `check:health`).
 - Зафиксирована карта портов и обновлена документация по локальному запуску.
+
+## Этап 4. Проектирование модульной и hook-архитектуры (частичный результат)
+### Что зафиксировано по факту
+- В `apps/web` оформлены домены editor frontend:
+`viewport`, `grid`, `geometry`, `selection`, `dimensions`, `tools`, `import`, `save`, `export`.
+- В `apps/api` оформлены домены backend:
+`drawings`, `recognition-jobs`, `files`, `exports`.
+- В `apps/ai-service` оформлены домены pipeline stages:
+`normalize-image`, `detect-lines`, `detect-text`, `parse-dimensions`,
+`build-graph`, `find-contours`, `normalize-units`, `assemble-result`.
+- Добавлен базовый `EditorHookManager` каркас в `apps/web`:
+typed hook names/contexts/payloads, register/unregister/execute, safe execution.
+- Добавлен базовый `PipelineManager` каркас в `apps/ai-service`:
+stage contracts, stage registry, safe sequential execution, структура ошибок и debug contracts.
+- Для `EditorHookManager` и `PipelineManager` добавлено базовое логирование выполнения
+ (start/finish/error) и режим continue-on-safe-failure для архитектурного каркаса.
+
+### Что пока остается в рамках этапа 4
+- Дальнейшая детализация hook points и менеджеров расширения.
+- Уточнение форматов контекста для междоменного взаимодействия.
+- Без реализации feature-логики (по плану этапа 4 это сознательно отложено).
