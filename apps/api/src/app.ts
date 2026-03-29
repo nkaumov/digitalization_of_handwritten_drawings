@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 
 import { registerErrorHandlers } from '@/common/errors/error-handler';
+import { registerRequestLogging } from '@/common/http/request-logging';
 import { registerDatabase } from '@/db';
 import { env } from '@/config/env';
 import { bootstrapApiDomains, createDomainLifecycleHookManager } from '@/domains';
@@ -24,10 +25,11 @@ export async function buildApp() {
       level: env.LOG_LEVEL,
       ...(developmentTransport ? { transport: developmentTransport } : {}),
     },
-    disableRequestLogging: false,
+    disableRequestLogging: true,
   });
 
   registerErrorHandlers(app);
+  registerRequestLogging(app);
   await registerDatabase(app);
 
   const domainLifecycleLogger = {

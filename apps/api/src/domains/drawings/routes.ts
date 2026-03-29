@@ -41,10 +41,16 @@ export const drawingsRoutes: FastifyPluginAsync = async (app) => {
     reply.status(200).send(result);
   });
 
+  app.post('/api/v1/drawings/:id/save', async (request, reply) => {
+    const params = request.params as { id?: unknown };
+    const input = validateSaveDrawingRequest(request.body);
+    const result = await drawingsService.saveDrawingByExternalId(String(params.id ?? ''), input);
+    reply.status(200).send(result);
+  });
+
   app.delete('/api/v1/drawings/:id', async (request, reply) => {
     const params = request.params as { id?: unknown };
     await drawingsService.deleteDrawingByExternalId(String(params.id ?? ''));
     reply.status(204).send();
   });
 };
-

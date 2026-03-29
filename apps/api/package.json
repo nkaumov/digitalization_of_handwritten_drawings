@@ -15,6 +15,7 @@
   "dependencies": {
     "@fastify/multipart": "^9.2.1",
     "@contracts": "workspace:*",
+    "dotenv": "^16.6.1",
     "fastify": "^5.6.1",
     "mysql2": "^3.15.2"
   },
