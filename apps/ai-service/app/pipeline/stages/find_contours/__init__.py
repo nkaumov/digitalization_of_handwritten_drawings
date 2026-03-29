@@ -1,8 +1,24 @@
 """Stage domain placeholder: find-contours."""
 
-from typing import Any, Dict
+from app.pipeline.types import PipelineStageInput, PipelineStageOutput
 
 
-def run(context: Dict[str, Any]) -> Dict[str, Any]:
-    context.setdefault("stages", []).append("find-contours")
-    return context
+def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
+    context = stage_input["context"]
+    return {
+        "context": context,
+        "stage_notes": [
+            {
+                "stage": "find-contours",
+                "level": "info",
+                "message": "placeholder executed",
+            }
+        ],
+        "debug_artifacts": [
+            {
+                "stage": "find-contours",
+                "kind": "contours",
+                "meta": {"placeholder": True},
+            }
+        ],
+    }

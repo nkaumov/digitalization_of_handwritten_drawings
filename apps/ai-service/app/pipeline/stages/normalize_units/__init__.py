@@ -1,8 +1,24 @@
 """Stage domain placeholder: normalize-units."""
 
-from typing import Any, Dict
+from app.pipeline.types import PipelineStageInput, PipelineStageOutput
 
 
-def run(context: Dict[str, Any]) -> Dict[str, Any]:
-    context.setdefault("stages", []).append("normalize-units")
-    return context
+def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
+    context = stage_input["context"]
+    return {
+        "context": context,
+        "stage_notes": [
+            {
+                "stage": "normalize-units",
+                "level": "info",
+                "message": "placeholder executed",
+            }
+        ],
+        "debug_artifacts": [
+            {
+                "stage": "normalize-units",
+                "kind": "normalized-units",
+                "meta": {"placeholder": True},
+            }
+        ],
+    }

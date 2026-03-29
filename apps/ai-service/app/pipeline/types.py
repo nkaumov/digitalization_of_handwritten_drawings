@@ -1,29 +1,25 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Literal, TypedDict
+from typing import Callable, List, TypedDict
 
-PipelineStageName = Literal[
-    "normalize-image",
-    "detect-lines",
-    "detect-text",
-    "parse-dimensions",
-    "build-graph",
-    "find-contours",
-    "normalize-units",
-    "assemble-result",
-]
+from app.pipeline.contracts import DebugArtifact, PipelineContext, PipelineWarning, StageNote
+from app.pipeline.stage_names import PipelineStageName
 
 
-class PipelineStageContext(TypedDict, total=False):
-    image_path: str
-    stages: List[str]
-    warnings: List[str]
-    payload: Dict[str, Any]
-    meta: Dict[str, Any]
+class PipelineStageInput(TypedDict):
+    stage: PipelineStageName
+    context: PipelineContext
 
 
-StageHandler = Callable[[PipelineStageContext], PipelineStageContext]
+class PipelineStageOutput(TypedDict, total=False):
+    context: PipelineContext
+    warnings: List[PipelineWarning]
+    stage_notes: List[StageNote]
+    debug_artifacts: List[DebugArtifact]
+
+
+StageHandler = Callable[[PipelineStageInput], PipelineStageOutput]
 
 
 @dataclass(frozen=True)
@@ -35,6 +31,6 @@ class PipelineStageError:
 
 @dataclass(frozen=True)
 class PipelineStageResult:
-    context: PipelineStageContext
+    context: PipelineContext
     completed_stages: List[PipelineStageName] = field(default_factory=list)
     errors: List[PipelineStageError] = field(default_factory=list)

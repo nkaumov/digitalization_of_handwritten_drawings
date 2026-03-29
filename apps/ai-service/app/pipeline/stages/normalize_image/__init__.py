@@ -1,8 +1,24 @@
 """Stage domain placeholder: normalize-image."""
 
-from typing import Any, Dict
+from app.pipeline.types import PipelineStageInput, PipelineStageOutput
 
 
-def run(context: Dict[str, Any]) -> Dict[str, Any]:
-    context.setdefault("stages", []).append("normalize-image")
-    return context
+def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
+    context = stage_input["context"]
+    return {
+        "context": context,
+        "stage_notes": [
+            {
+                "stage": "normalize-image",
+                "level": "info",
+                "message": "placeholder executed",
+            }
+        ],
+        "debug_artifacts": [
+            {
+                "stage": "normalize-image",
+                "kind": "normalized-image",
+                "meta": {"placeholder": True},
+            }
+        ],
+    }
