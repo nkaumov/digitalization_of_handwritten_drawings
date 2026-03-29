@@ -16,12 +16,13 @@
 - Этап 2 выполнен.
 - Этап 3 выполнен как локально запускаемый инфраструктурный каркас.
 - Этап 4 закрыт по факту на уровне архитектурного каркаса (домены, hooks/stages, contracts, registry/manager, chain-логирование и safe-failure правила).
-- Следующий рабочий шаг: переход к этапу 5 (реализация backend-ядра и прикладной логики).
+- Этап 5 закрыт по факту в рамках backend-ядра (БД/миграции, drawings/files/recognition-jobs/exports endpoints, единый формат ошибок, логирование запросов и стадий).
+- Следующий рабочий шаг: переход к этапу 6 (реализация frontend-редактора).
 
 ## Структура проекта
 
 - `apps/web` — frontend-каркас (React + TypeScript + Vite, i18n, layout-заглушки).
-- `apps/api` — backend-каркас (Fastify + TypeScript, env, logger, health endpoints, error format).
+- `apps/api` — backend-ядро MVP (Fastify + TypeScript, DB/migrations, API modules, error format, request logging).
 - `apps/ai-service` — AI service-каркас (FastAPI, env, logger, health, pipeline placeholders).
 - `packages/contracts` — общие typed-контракты между web/api/ai.
 - `scripts` — служебные скрипты запуска и проверок.
@@ -81,9 +82,8 @@
 ## Что еще не реализовано
 
 - Реальная логика редактора (SVG viewport/tools).
-- CRUD и прикладная бизнес-логика backend.
 - OCR/OpenCV и реальный recognition pipeline.
-- Интеграция backend ↔ ai-service.
+- Реальная интеграция backend ↔ ai-service (вызов внешнего AI-service вместо backend placeholder-flow).
 
 ## Что готово по этапу 4 (каркас)
 
@@ -98,3 +98,19 @@
 
 - Этап 4 завершен как архитектурный каркас и сознательно не включает feature-реализацию.
 - Реальная логика редактора, backend CRUD/бизнес-логика, OCR/OpenCV и интеграции переходят в этапы 5+.
+
+## Что готово по этапу 5 (backend-ядро)
+
+- В `apps/api` реализованы подключение к MySQL, миграции и актуальная главная схема `apps/api/schema.sql`.
+- Реализован `drawings` модуль: CRUD, создание пустого чертежа, получение по id, обновление, сохранение исправленного чертежа и структуры геометрии с валидацией payload.
+- Реализован `files` модуль: прием файла изображения (`multipart`) и хранение исходного изображения в `storage/uploads` + запись в `stored_files`.
+- Реализован `recognition-jobs` модуль: запуск распознавания, получение статуса, получение итогового результата, служебное логирование стадий в БД и логи API.
+- Реализован `exports` модуль: endpoint экспорта в PDF и в изображение с сохранением export-артефакта и записи в `exports`/`stored_files`.
+- Поддержан единый формат API-ошибок через `AppError` и global error handler.
+- Добавлено отдельное логирование HTTP-запросов (method/url/status/duration/requestId).
+
+## Что после этапа 5 еще не реализовано
+
+- Реальная AI-логика распознавания и OCR/OpenCV обработка.
+- Реальный render-экспорт чертежа (сейчас backend placeholder-артефакты для API-ядра).
+- Полноценный frontend-редактор и пользовательская прикладная логика следующих этапов.

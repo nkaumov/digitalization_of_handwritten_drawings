@@ -13,6 +13,8 @@
     "dev:ai": ".\\apps\\ai-service\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8001 --app-dir apps/ai-service",
     "dev:ai:managed": ".\\apps\\ai-service\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --app-dir apps/ai-service",
     "dev:api:log": "powershell -ExecutionPolicy Bypass -File scripts/dev-api-log.ps1",
+    "db:migrate": "npx pnpm@10.6.2 --filter @app/api db:migrate",
+    "db:migrate:status": "npx pnpm@10.6.2 --filter @app/api db:migrate:status",
     "check:health": "powershell -ExecutionPolicy Bypass -File scripts/check-health.ps1",
     "run:log": "powershell -ExecutionPolicy Bypass -File scripts/run-with-log.ps1",
     "build": "npx pnpm@10.6.2 -r --filter ./apps/* --filter ./packages/* build",
