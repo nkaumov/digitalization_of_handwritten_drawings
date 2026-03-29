@@ -27,3 +27,7 @@ storage/debug/*
 # Local terminal logs
 logs/*
 !logs/.gitkeep
+
+# AI research temporary artifacts
+apps/ai-service/research/artifacts/*
+!apps/ai-service/research/artifacts/.gitkeep

@@ -1,1 +1,1 @@
-﻿"""AI service package scaffold."""
+"""AI service application package."""
