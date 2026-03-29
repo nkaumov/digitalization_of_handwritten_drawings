@@ -1,9 +1,10 @@
 export type DrawingStatus =
-  | 'new'
-  | 'empty'
-  | 'processing'
+  | 'draft'
+  | 'blank_ready'
+  | 'recognition_pending'
+  | 'recognition_processing'
   | 'recognized'
-  | 'needs_revision'
+  | 'needs_review'
   | 'saved'
   | 'error';
 
@@ -15,6 +16,8 @@ export type ExportStatus = 'queued' | 'processing' | 'completed' | 'failed';
 export interface DrawingRow {
   id: number;
   title: string;
+  source_type: 'blank' | 'photo';
+  locale: string;
   status: DrawingStatus;
   source_file_id: number | null;
   recognized_payload: string | null;
@@ -100,4 +103,3 @@ export interface ExportRow {
   created_at: string;
   updated_at: string;
 }
-

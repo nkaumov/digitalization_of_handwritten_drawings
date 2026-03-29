@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS stored_files (
 CREATE TABLE IF NOT EXISTS drawings (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL DEFAULT 'Untitled drawing',
-  status ENUM('new', 'empty', 'processing', 'recognized', 'needs_revision', 'saved', 'error') NOT NULL DEFAULT 'new',
+  source_type ENUM('blank', 'photo') NOT NULL DEFAULT 'blank',
+  locale VARCHAR(16) NOT NULL DEFAULT 'ru',
+  status ENUM('draft', 'blank_ready', 'recognition_pending', 'recognition_processing', 'recognized', 'needs_review', 'saved', 'error') NOT NULL DEFAULT 'draft',
   source_file_id BIGINT UNSIGNED NULL,
   recognized_payload JSON NULL,
   edited_payload JSON NULL,
@@ -120,4 +122,3 @@ CREATE TABLE IF NOT EXISTS exports (
   CONSTRAINT fk_exports_drawing_id FOREIGN KEY (drawing_id) REFERENCES drawings (id),
   CONSTRAINT fk_exports_file_id FOREIGN KEY (file_id) REFERENCES stored_files (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
