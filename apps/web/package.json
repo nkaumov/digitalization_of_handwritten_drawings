@@ -1,0 +1,15 @@
+﻿{
+  "name": "@app/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"console.log('web scaffold: no editor implementation yet')\"",
+    "build": "node -e \"console.log('web scaffold build placeholder')\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "node -e \"console.log('web scaffold lint placeholder')\""
+  },
+  "dependencies": {
+    "@contracts": "workspace:*"
+  }
+}

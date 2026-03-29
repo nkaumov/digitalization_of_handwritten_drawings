@@ -1,0 +1,25 @@
+﻿node_modules
+pnpm-lock.yaml
+
+# Build artifacts
+coverage
+dist
+build
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__
+.pytest_cache
+.venv
+
+# Runtime storage contents (keep folders only)
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/exports/*
+!storage/exports/.gitkeep
+storage/debug/*
+!storage/debug/.gitkeep
