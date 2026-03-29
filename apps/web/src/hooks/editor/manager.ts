@@ -1,7 +1,11 @@
 import type { EditorHookContextByName } from './contexts';
-import { EDITOR_HOOK_NAMES, type EditorHookName } from './hook-names';
+import { EDITOR_HOOK_NAMES, getEditorHookPoint, type EditorHookName } from './hook-names';
 import type {
   EditorHookHandler,
+  HookChainExecutionOptions,
+  HookChainExecutionResult,
+  HookExecutionCall,
+  HookExecutionOptions,
   EditorHookManagerOptions,
   HookExecutionError,
   HookExecutionResult,
@@ -18,11 +22,13 @@ export class EditorHookManager {
 
   private readonly onError?: EditorHookManagerOptions['onError'];
   private readonly continueOnSafeFailure: boolean;
+  private readonly defaultTriggeredBy: string;
   private readonly logger: HookLogger;
 
   public constructor(options?: EditorHookManagerOptions) {
     this.onError = options?.onError;
     this.continueOnSafeFailure = options?.continueOnSafeFailure ?? true;
+    this.defaultTriggeredBy = options?.defaultTriggeredBy ?? 'editor-core';
     this.logger = options?.logger ?? createDefaultHookLogger();
 
     for (const name of EDITOR_HOOK_NAMES) {
@@ -71,27 +77,64 @@ export class EditorHookManager {
   public async execute<TName extends EditorHookName>(
     name: TName,
     context: EditorHookContextByName[TName],
+    options?: HookExecutionOptions,
   ): Promise<HookExecutionResult<TName>> {
     const bucket = this.getBucket(name);
     const errors: HookExecutionError[] = [];
-    let currentContext = context;
+    const startedAt = Date.now();
+    const startedAtIso = new Date(startedAt).toISOString();
+    const chainId = options?.chainId ?? this.createChainId();
+    const sequence = options?.sequence ?? 1;
+    const totalInChain = options?.totalInChain ?? 1;
+    const continueOnSafeFailure = options?.continueOnSafeFailure ?? this.continueOnSafeFailure;
+    const triggeredBy = options?.triggeredBy ?? this.defaultTriggeredBy;
+    const hookPoint = getEditorHookPoint(name);
+    const callId = this.createCallId(name, sequence);
+
+    let currentContext = {
+      ...context,
+      runtime: {
+        ...context.runtime,
+        chainId,
+        callId,
+        hookName: name,
+        hookPhase: hookPoint.phase,
+        hookArea: hookPoint.area,
+        operation: hookPoint.operation,
+        sequence,
+        totalInChain,
+        triggeredBy,
+        startedAtIso,
+        continueOnSafeFailure,
+      },
+    };
     const totalHandlers = bucket.size;
+    let abortedByPolicy = false;
 
     this.logger.info('hook execution started', {
       hook: name,
+      chainId,
+      sequence,
+      totalInChain,
+      triggeredBy,
       handlerCount: totalHandlers,
+      continueOnSafeFailure,
     });
 
     for (const [handlerId, handler] of bucket.entries()) {
       try {
-        this.logger.info('hook handler started', { hook: name, handlerId });
+        this.logger.info('hook handler started', { hook: name, chainId, handlerId });
         const next = await handler(currentContext);
         if (next !== undefined) {
-          currentContext = next as EditorHookContextByName[TName];
+          currentContext = {
+            ...(next as EditorHookContextByName[TName]),
+            runtime: currentContext.runtime,
+          };
         }
-        this.logger.info('hook handler completed', { hook: name, handlerId });
+        this.logger.info('hook handler completed', { hook: name, chainId, handlerId });
       } catch (error) {
         const executionError: HookExecutionError = {
+          chainId,
           hookName: name,
           handlerId,
           error,
@@ -100,28 +143,107 @@ export class EditorHookManager {
         errors.push(executionError);
         this.logger.error('hook handler failed', {
           hook: name,
+          chainId,
           handlerId,
           error: error instanceof Error ? error.message : 'unknown-error',
         });
         this.onError?.(executionError);
 
-        if (!this.continueOnSafeFailure) {
-          this.logger.error('hook execution aborted by failure policy', { hook: name });
+        if (!continueOnSafeFailure) {
+          abortedByPolicy = true;
+          this.logger.error('hook execution aborted by failure policy', { hook: name, chainId });
           break;
         }
       }
     }
 
+    const finishedAt = Date.now();
+    const finishedAtIso = new Date(finishedAt).toISOString();
+    const durationMs = finishedAt - startedAt;
+
     this.logger.info('hook execution completed', {
       hook: name,
+      chainId,
+      durationMs,
       handlerCount: totalHandlers,
       errors: errors.length,
-      continueOnSafeFailure: this.continueOnSafeFailure,
+      abortedByPolicy,
+      continueOnSafeFailure,
     });
 
     return {
+      hookName: name,
+      chainId,
+      handlerCount: totalHandlers,
+      startedAtIso,
+      finishedAtIso,
+      durationMs,
+      abortedByPolicy,
       context: currentContext,
       errors,
+    };
+  }
+
+  public async executeChain(
+    calls: HookExecutionCall[],
+    options?: HookChainExecutionOptions,
+  ): Promise<HookChainExecutionResult> {
+    const startedAt = Date.now();
+    const startedAtIso = new Date(startedAt).toISOString();
+    const chainId = options?.chainId ?? this.createChainId();
+    const continueOnSafeFailure = options?.continueOnSafeFailure ?? this.continueOnSafeFailure;
+    const triggeredBy = options?.triggeredBy ?? this.defaultTriggeredBy;
+    const steps: HookExecutionResult[] = [];
+    const errors: HookExecutionError[] = [];
+    let abortedByPolicy = false;
+
+    this.logger.info('hook chain execution started', {
+      chainId,
+      triggeredBy,
+      stepCount: calls.length,
+      continueOnSafeFailure,
+    });
+
+    for (const [index, call] of calls.entries()) {
+      const step = await this.execute(call.name, call.context, {
+        chainId,
+        triggeredBy,
+        continueOnSafeFailure,
+        sequence: index + 1,
+        totalInChain: calls.length,
+      });
+
+      steps.push(step);
+      errors.push(...step.errors);
+
+      if (step.abortedByPolicy) {
+        abortedByPolicy = true;
+        break;
+      }
+    }
+
+    const finishedAt = Date.now();
+    const finishedAtIso = new Date(finishedAt).toISOString();
+    const durationMs = finishedAt - startedAt;
+
+    this.logger.info('hook chain execution completed', {
+      chainId,
+      durationMs,
+      stepCount: calls.length,
+      executedSteps: steps.length,
+      errors: errors.length,
+      abortedByPolicy,
+      continueOnSafeFailure,
+    });
+
+    return {
+      chainId,
+      startedAtIso,
+      finishedAtIso,
+      durationMs,
+      steps,
+      errors,
+      abortedByPolicy,
     };
   }
 
@@ -137,6 +259,16 @@ export class EditorHookManager {
   private nextHandlerId(name: EditorHookName): string {
     this.sequence += 1;
     return `${name}:${this.sequence}`;
+  }
+
+  private createChainId(): string {
+    this.sequence += 1;
+    return `hook-chain:${this.sequence}`;
+  }
+
+  private createCallId(name: EditorHookName, sequence: number): string {
+    this.sequence += 1;
+    return `${name}:call:${sequence}:${this.sequence}`;
   }
 }
 
