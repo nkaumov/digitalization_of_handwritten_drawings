@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 
 import { registerErrorHandlers } from '@/common/errors/error-handler';
+import { registerDatabase } from '@/db';
 import { env } from '@/config/env';
 import { bootstrapApiDomains, createDomainLifecycleHookManager } from '@/domains';
 import { registerRoutes } from '@/modules';
@@ -27,6 +28,7 @@ export async function buildApp() {
   });
 
   registerErrorHandlers(app);
+  await registerDatabase(app);
 
   const domainLifecycleLogger = {
     info: (message: string, meta?: Record<string, unknown>) => {

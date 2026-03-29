@@ -9,6 +9,11 @@ export interface EnvConfig {
   API_HOST: string;
   API_PORT: number;
   LOG_LEVEL: LogLevel;
+  DB_HOST: string;
+  DB_PORT: number;
+  DB_USER: string;
+  DB_PASSWORD: string;
+  DB_NAME: string;
 }
 
 function isLogLevel(value: string): value is LogLevel {
@@ -52,6 +57,11 @@ function loadEnv(): EnvConfig {
     API_HOST: process.env.API_HOST ?? '127.0.0.1',
     API_PORT: parsePort(process.env.API_PORT, 3001),
     LOG_LEVEL: parseLogLevel(process.env.LOG_LEVEL, nodeEnv),
+    DB_HOST: process.env.DB_HOST ?? '127.0.0.1',
+    DB_PORT: parsePort(process.env.DB_PORT, 3306),
+    DB_USER: process.env.DB_USER ?? 'root',
+    DB_PASSWORD: process.env.DB_PASSWORD ?? '',
+    DB_NAME: process.env.DB_NAME ?? 'digitalization_of_handwritten_drawings',
   };
 }
 
