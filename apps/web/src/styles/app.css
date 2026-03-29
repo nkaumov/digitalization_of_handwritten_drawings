@@ -84,6 +84,33 @@ body {
   flex-wrap: wrap;
 }
 
+.editor-shell__dimension-list,
+.editor-shell__warning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-shell__dimension-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid #d3dceb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.editor-shell__dimension-row input {
+  border: 1px solid #9fb0cb;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.editor-shell__dimension-row small {
+  color: #415174;
+}
+
 .editor-shell__workspace {
   padding: 16px;
   display: flex;
@@ -148,6 +175,11 @@ body {
   stroke-width: 3;
 }
 
+.editor-shell__segment.is-warning {
+  stroke: #b91c1c;
+  stroke-dasharray: 6 4;
+}
+
 .editor-shell__point {
   fill: #f7fbff;
   stroke: #16345c;
@@ -159,6 +191,28 @@ body {
   fill: #ffd7c2;
   stroke: #9e3212;
   stroke-width: 2;
+}
+
+.editor-shell__point.is-warning {
+  fill: #fee2e2;
+  stroke: #b91c1c;
+}
+
+.editor-shell__dimension rect {
+  fill: #f5f8ff;
+  stroke: #aebed8;
+}
+
+.editor-shell__dimension text {
+  fill: #1b2f50;
+  font-size: 9px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.editor-shell__dimension.is-warning rect {
+  fill: #fee2e2;
+  stroke: #b91c1c;
 }
 
 .editor-shell__status {

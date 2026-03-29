@@ -24,7 +24,7 @@
     "workspace": {
       "ariaLabel": "Visual editor workspace",
       "title": "Working area",
-      "subtitle": "Viewport, grid, geometry layers, and basic editing interactions are active in this shell.",
+      "subtitle": "Viewport, grid, geometry layers, dimensions, and warning highlighting are active in this shell.",
       "canvasAriaLabel": "Editor canvas"
     },
     "selection": {
@@ -36,6 +36,28 @@
       "twoPoints": "Selected points: {{first}} and {{second}}",
       "multiSelectHint": "Hold Shift and click points to select up to two points.",
       "counts": "Contours={{contours}}, points={{points}}, segments={{segments}}"
+    },
+    "dimensions": {
+      "ariaLabel": "Dimensions panel",
+      "title": "Dimensions",
+      "description": "Edit numeric labels bound to segments.",
+      "itemLabel": "Contour={{contourId}}, segment={{segmentId}}",
+      "inputPlaceholder": "Dimension value",
+      "resolved": "Resolved",
+      "unresolved": "Unresolved"
+    },
+    "warnings": {
+      "ariaLabel": "Geometry warnings",
+      "title": "Geometry warnings",
+      "description": "Basic geometry checks for stage 6 editor shell.",
+      "none": "No geometry warnings",
+      "item": "{{code}} in contour {{contourId}}",
+      "codes": {
+        "geometry.contour_open": "Contour is not closed",
+        "geometry.segment_broken_reference": "Segment has broken point reference",
+        "geometry.segment_too_short": "Segment is too short",
+        "geometry.point_degree_invalid": "Point connectivity is invalid"
+      }
     },
     "history": {
       "ariaLabel": "Action history",
@@ -53,6 +75,8 @@
       "viewportOffset": "Viewport offset: x={{x}}, y={{y}}",
       "selected": "Selected: {{value}}",
       "closure": "Contour closure: closed={{closed}}, open={{open}}",
+      "dimensions": "Dimensions: total={{total}}, unresolved={{unresolved}}",
+      "geometryWarnings": "Geometry warnings: {{count}}",
       "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

@@ -24,7 +24,7 @@
     "workspace": {
       "ariaLabel": "Визуальное рабочее поле редактора",
       "title": "Рабочая область",
-      "subtitle": "В этом каркасе активны viewport, сетка, геометрические слои и базовые действия редактирования.",
+      "subtitle": "В этом каркасе активны viewport, сетка, геометрические слои, размеры и подсветка предупреждений.",
       "canvasAriaLabel": "Холст редактора"
     },
     "selection": {
@@ -36,6 +36,28 @@
       "twoPoints": "Выбраны точки: {{first}} и {{second}}",
       "multiSelectHint": "Удерживайте Shift и кликайте по точкам, чтобы выбрать до двух точек.",
       "counts": "Контуры={{contours}}, точки={{points}}, сегменты={{segments}}"
+    },
+    "dimensions": {
+      "ariaLabel": "Панель размеров",
+      "title": "Размеры",
+      "description": "Редактирование числовых подписей, привязанных к сегментам.",
+      "itemLabel": "Контур={{contourId}}, сегмент={{segmentId}}",
+      "inputPlaceholder": "Значение размера",
+      "resolved": "Разобран",
+      "unresolved": "Не разобран"
+    },
+    "warnings": {
+      "ariaLabel": "Геометрические предупреждения",
+      "title": "Предупреждения геометрии",
+      "description": "Базовые проверки геометрии для каркаса редактора этапа 6.",
+      "none": "Геометрических предупреждений нет",
+      "item": "{{code}} в контуре {{contourId}}",
+      "codes": {
+        "geometry.contour_open": "Контур не замкнут",
+        "geometry.segment_broken_reference": "Сегмент ссылается на несуществующую точку",
+        "geometry.segment_too_short": "Сегмент слишком короткий",
+        "geometry.point_degree_invalid": "Некорректная связность точки"
+      }
     },
     "history": {
       "ariaLabel": "История действий",
@@ -53,6 +75,8 @@
       "viewportOffset": "Смещение viewport: x={{x}}, y={{y}}",
       "selected": "Выбрано: {{value}}",
       "closure": "Замкнутость контуров: closed={{closed}}, open={{open}}",
+      "dimensions": "Размеры: total={{total}}, unresolved={{unresolved}}",
+      "geometryWarnings": "Предупреждения геометрии: {{count}}",
       "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
     }
   },

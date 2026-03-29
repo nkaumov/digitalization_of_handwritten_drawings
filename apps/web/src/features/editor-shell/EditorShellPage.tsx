@@ -1,4 +1,4 @@
-﻿import { useMemo, type PointerEvent } from 'react';
+﻿import { useMemo, type ChangeEvent, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -21,6 +21,17 @@ export function EditorShellPage() {
   const historyState = historyManager.getState();
   const closedContours = drawingEditor.drawing.contours.filter((contour) => contour.closed).length;
   const openContours = drawingEditor.drawing.contours.length - closedContours;
+
+  const dimensionItems = useMemo(
+    () =>
+      drawingEditor.drawing.contours.flatMap((contour) =>
+        contour.dimensions.map((dimension) => ({
+          contourId: contour.id,
+          dimension,
+        })),
+      ),
+    [drawingEditor.drawing.contours],
+  );
 
   const selectedLabel = useMemo(() => {
     if (selectionApi.selectedSegment) {
@@ -92,6 +103,10 @@ export function EditorShellPage() {
     selectionApi.clear();
   };
 
+  const handleDimensionChange = (contourId: string, dimensionId: string) => (event: ChangeEvent<HTMLInputElement>) => {
+    drawingEditor.updateDimensionRawText(contourId, dimensionId, event.target.value);
+  };
+
   return (
     <div className="editor-shell">
       <header className="editor-shell__header" aria-label={t('editorShell.header.ariaLabel')}>
@@ -149,6 +164,52 @@ export function EditorShellPage() {
           </p>
         </section>
 
+        <section className="editor-shell__panel" aria-label={t('editorShell.dimensions.ariaLabel')}>
+          <h2>{t('editorShell.dimensions.title')}</h2>
+          <p>{t('editorShell.dimensions.description')}</p>
+          <div className="editor-shell__dimension-list">
+            {dimensionItems.map((item) => (
+              <label key={item.dimension.id} className="editor-shell__dimension-row">
+                <span>
+                  {t('editorShell.dimensions.itemLabel', {
+                    contourId: item.contourId,
+                    segmentId: item.dimension.segmentId,
+                  })}
+                </span>
+                <input
+                  value={item.dimension.rawText}
+                  onChange={handleDimensionChange(item.contourId, item.dimension.id)}
+                  placeholder={t('editorShell.dimensions.inputPlaceholder')}
+                />
+                <small>
+                  {item.dimension.isResolved
+                    ? t('editorShell.dimensions.resolved')
+                    : t('editorShell.dimensions.unresolved')}
+                </small>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <section className="editor-shell__panel" aria-label={t('editorShell.warnings.ariaLabel')}>
+          <h2>{t('editorShell.warnings.title')}</h2>
+          <p>{t('editorShell.warnings.description')}</p>
+          <div className="editor-shell__warning-list">
+            {drawingEditor.geometryWarnings.length === 0 ? (
+              <p>{t('editorShell.warnings.none')}</p>
+            ) : (
+              drawingEditor.geometryWarnings.map((warning) => (
+                <p key={warning.id}>
+                  {t('editorShell.warnings.item', {
+                    code: t(`editorShell.warnings.codes.${warning.code}`),
+                    contourId: warning.contourId,
+                  })}
+                </p>
+              ))
+            )}
+          </div>
+        </section>
+
         <section className="editor-shell__panel" aria-label={t('editorShell.history.ariaLabel')}>
           <h2>{t('editorShell.history.title')}</h2>
           <p>{t('editorShell.history.placeholder')}</p>
@@ -174,6 +235,8 @@ export function EditorShellPage() {
           viewport={navigation.viewport}
           grid={navigation.grid}
           scene={drawingEditor.scene}
+          dimensionLabels={drawingEditor.dimensionLabels}
+          geometryWarnings={drawingEditor.geometryWarnings}
           selection={selectionApi.selection}
           onPointSelect={handlePointSelect}
           onPointMove={handlePointMove}
@@ -204,6 +267,13 @@ export function EditorShellPage() {
             open: openContours,
           })}
         </p>
+        <p>
+          {t('editorShell.status.dimensions', {
+            total: dimensionItems.length,
+            unresolved: dimensionItems.filter((item) => !item.dimension.isResolved).length,
+          })}
+        </p>
+        <p>{t('editorShell.status.geometryWarnings', { count: drawingEditor.geometryWarnings.length })}</p>
         <p>
           {t('editorShell.status.historyState', {
             undoCount: Math.max(historyState.past.length - 1, 0),

@@ -1,7 +1,8 @@
 ﻿import type { TFunction } from 'i18next';
 import type { PointerEvent, WheelEvent } from 'react';
 
-import type { GeometryScene } from '@/domains/geometry';
+import type { DimensionLabelItem } from '@/domains/dimensions';
+import type { GeometryScene, GeometryWarningItem } from '@/domains/geometry';
 import type { SelectionState } from '@/domains/selection';
 import type { ViewportState } from '@/domains/viewport';
 import { GeometryLayer } from '@/features/editor-shell/GeometryLayer';
@@ -14,6 +15,8 @@ interface ViewportCanvasProps {
     backgroundPosition: string;
   };
   scene: GeometryScene;
+  dimensionLabels: DimensionLabelItem[];
+  geometryWarnings: GeometryWarningItem[];
   selection: SelectionState;
   onPointSelect: (contourId: string, pointId: string, isMultiSelect: boolean) => void;
   onPointMove: (contourId: string, pointId: string, x: number, y: number) => void;
@@ -30,6 +33,8 @@ export function ViewportCanvas({
   viewport,
   grid,
   scene,
+  dimensionLabels,
+  geometryWarnings,
   selection,
   onPointSelect,
   onPointMove,
@@ -63,6 +68,8 @@ export function ViewportCanvas({
       >
         <GeometryLayer
           scene={scene}
+          dimensionLabels={dimensionLabels}
+          geometryWarnings={geometryWarnings}
           selection={selection}
           onPointSelect={onPointSelect}
           onPointMove={onPointMove}

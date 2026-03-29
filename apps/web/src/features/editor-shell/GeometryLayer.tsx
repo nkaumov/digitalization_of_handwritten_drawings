@@ -4,7 +4,9 @@ import {
   GEOMETRY_CANVAS_HEIGHT,
   GEOMETRY_CANVAS_WIDTH,
   type GeometryScene,
+  type GeometryWarningItem,
 } from '@/domains/geometry';
+import type { DimensionLabelItem } from '@/domains/dimensions';
 import type { SelectionState } from '@/domains/selection';
 
 interface DragPointState {
@@ -15,6 +17,8 @@ interface DragPointState {
 
 interface GeometryLayerProps {
   scene: GeometryScene;
+  dimensionLabels: DimensionLabelItem[];
+  geometryWarnings: GeometryWarningItem[];
   selection: SelectionState;
   onPointSelect: (contourId: string, pointId: string, isMultiSelect: boolean) => void;
   onPointMove: (contourId: string, pointId: string, x: number, y: number) => void;
@@ -34,12 +38,24 @@ function toSvgCoordinates(event: PointerEvent<SVGSVGElement>): { x: number; y: n
 
 export function GeometryLayer({
   scene,
+  dimensionLabels,
+  geometryWarnings,
   selection,
   onPointSelect,
   onPointMove,
   onSegmentSelect,
 }: GeometryLayerProps) {
   const dragStateRef = useRef<DragPointState | null>(null);
+  const segmentWarningSet = new Set(
+    geometryWarnings
+      .filter((warning) => warning.segmentId)
+      .map((warning) => `${warning.contourId}:${warning.segmentId}`),
+  );
+  const pointWarningSet = new Set(
+    geometryWarnings
+      .filter((warning) => warning.pointId)
+      .map((warning) => `${warning.contourId}:${warning.pointId}`),
+  );
 
   const handleSvgPointerMove = (event: PointerEvent<SVGSVGElement>) => {
     const dragState = dragStateRef.current;
@@ -72,12 +88,21 @@ export function GeometryLayer({
             const selected =
               selection.segment?.contourId === segmentNode.contourId &&
               selection.segment.segmentId === segmentNode.segment.id;
+            const hasWarning = segmentWarningSet.has(
+              `${segmentNode.contourId}:${segmentNode.segment.id}`,
+            );
 
             return (
               <line
                 key={segmentNode.segment.id}
                 data-interactive="true"
-                className={selected ? 'editor-shell__segment is-selected' : 'editor-shell__segment'}
+                className={[
+                  'editor-shell__segment',
+                  selected ? 'is-selected' : '',
+                  hasWarning ? 'is-warning' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
                 x1={segmentNode.from.x}
                 y1={segmentNode.from.y}
                 x2={segmentNode.to.x}
@@ -95,12 +120,19 @@ export function GeometryLayer({
               (point) =>
                 point.contourId === pointNode.contourId && point.pointId === pointNode.point.id,
             );
+            const hasWarning = pointWarningSet.has(`${pointNode.contourId}:${pointNode.point.id}`);
 
             return (
               <circle
                 key={pointNode.point.id}
                 data-interactive="true"
-                className={selected ? 'editor-shell__point is-selected' : 'editor-shell__point'}
+                className={[
+                  'editor-shell__point',
+                  selected ? 'is-selected' : '',
+                  hasWarning ? 'is-warning' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
                 cx={pointNode.point.x}
                 cy={pointNode.point.y}
                 r={5}
@@ -123,6 +155,18 @@ export function GeometryLayer({
               />
             );
           })}
+        </g>
+      ))}
+
+      {dimensionLabels.map((label) => (
+        <g
+          key={label.dimensionId}
+          className={label.hasWarning ? 'editor-shell__dimension is-warning' : 'editor-shell__dimension'}
+        >
+          <rect x={label.x - 16} y={label.y - 9} width={32} height={18} rx={4} />
+          <text x={label.x} y={label.y + 4}>
+            {label.text}
+          </text>
         </g>
       ))}
     </svg>
