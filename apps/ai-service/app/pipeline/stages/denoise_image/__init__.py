@@ -2,8 +2,13 @@
 
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.pipeline.preprocess import add_preprocess_output, persist_preprocess_snapshot
+from app.pipeline.preprocess import (
+    add_preprocess_output,
+    get_latest_output_path,
+    persist_preprocess_snapshot,
+)
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
+from PIL import Image, ImageFilter
 
 logger = get_logger(__name__)
 
@@ -11,31 +16,43 @@ logger = get_logger(__name__)
 def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
     context = stage_input["context"]
     preprocess = context.get("preprocess", {})
-    image_path = preprocess.get("image_path") or context.get("image_path") or ""
+    image_path = (
+        get_latest_output_path(preprocess, "normalized-image")
+        or preprocess.get("image_path")
+        or context.get("image_path")
+        or ""
+    )
 
     debug_path = None
     if image_path and settings.debug_artifacts_enabled:
         from pathlib import Path
-        import shutil
 
         source = Path(image_path)
         if source.exists():
             target_dir = Path(settings.debug_artifacts_dir)
             target_dir.mkdir(parents=True, exist_ok=True)
-            target = target_dir / f"{source.stem}-denoised{source.suffix or '.bin'}"
+            target = target_dir / f"{source.stem}-denoised{source.suffix or '.png'}"
             try:
-                shutil.copyfile(source, target)
+                with Image.open(source) as image:
+                    denoised = image.filter(ImageFilter.MedianFilter(size=3))
+                    denoised.save(target)
                 debug_path = str(target)
                 add_preprocess_output(
                     preprocess,
                     kind="denoised-image",
                     path=debug_path,
-                    note="placeholder denoise output",
+                    note="median filter denoise",
                 )
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 logger.warning(
-                    "Failed to store denoised placeholder output",
+                    "Failed to store denoised output",
                     extra={"path": str(target), "error": str(exc)},
+                )
+                add_preprocess_output(
+                    preprocess,
+                    kind="denoised-image",
+                    path=None,
+                    note="denoise failed",
                 )
         else:
             add_preprocess_output(
