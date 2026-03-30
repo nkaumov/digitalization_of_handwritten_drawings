@@ -1,1 +1,2 @@
-﻿export * from './drawingsClient';
+export * from './drawingsClient';
+export * from './recognitionClient';

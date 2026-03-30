@@ -8,9 +8,14 @@ import {
   createDrawingInBackend,
   fetchDrawingById,
   fetchDrawingsList,
+  getRecognitionJobResult,
+  getRecognitionJobStatus,
   isBackendDrawingId,
+  MAX_SOURCE_IMAGE_SIZE_BYTES,
   normalizeBackendDrawingId,
   saveDrawingToBackend,
+  startRecognitionJob,
+  uploadSourceImage,
   updateDrawingMeta,
   type DrawingsListItem,
 } from '@/features/editor-shell/api';
@@ -20,9 +25,20 @@ import { ViewportCanvas } from '@/features/editor-shell/ViewportCanvas';
 import { useViewportNavigation } from '@/features/editor-shell/viewport';
 
 type ScreenMode = 'list' | 'editor';
+type CreateModalMode = 'choice' | 'ai-upload';
+type AiFlowStatus =
+  | 'idle'
+  | 'uploading'
+  | 'starting'
+  | 'processing'
+  | 'fetchingResult'
+  | 'openingDrawing'
+  | 'failed';
 
 const SNAP_DISTANCE = 10;
 const CONNECTED_HIGHLIGHT_MS = 650;
+const RECOGNITION_POLL_INTERVAL_MS = 900;
+const RECOGNITION_MAX_POLL_ATTEMPTS = 45;
 
 export function EditorShellPage() {
   const { t, i18n } = useTranslation();
@@ -35,6 +51,11 @@ export function EditorShellPage() {
   const [drawings, setDrawings] = useState<DrawingsListItem[]>([]);
   const [isListLoading, setIsListLoading] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createModalMode, setCreateModalMode] = useState<CreateModalMode>('choice');
+  const [createPhotoFile, setCreatePhotoFile] = useState<File | null>(null);
+  const [isAiFlowRunning, setIsAiFlowRunning] = useState(false);
+  const [aiFlowStatus, setAiFlowStatus] = useState<AiFlowStatus>('idle');
+  const [aiFlowMessage, setAiFlowMessage] = useState('');
 
   const [remoteDrawingId, setRemoteDrawingId] = useState<string | null>(null);
   const [drawingTitle, setDrawingTitle] = useState('');
@@ -120,6 +141,27 @@ export function EditorShellPage() {
   const [segmentLengthInput, setSegmentLengthInput] = useState('');
   const [segmentAngleInput, setSegmentAngleInput] = useState('');
 
+  const resetCreateModalState = () => {
+    setCreateModalMode('choice');
+    setCreatePhotoFile(null);
+    setIsAiFlowRunning(false);
+    setAiFlowStatus('idle');
+    setAiFlowMessage('');
+  };
+
+  const openCreateModal = () => {
+    resetCreateModalState();
+    setIsCreateModalOpen(true);
+  };
+
+  const closeCreateModal = () => {
+    if (isAiFlowRunning) {
+      return;
+    }
+    setIsCreateModalOpen(false);
+    resetCreateModalState();
+  };
+
   useEffect(() => {
     if (!selectedSegmentMetrics) {
       setSegmentLengthInput('');
@@ -190,7 +232,7 @@ export function EditorShellPage() {
         locale: i18n.language,
       });
 
-      setIsCreateModalOpen(false);
+      closeCreateModal();
       await refreshDrawingsList();
       await openDrawingById(created.id);
     } catch (error) {
@@ -202,9 +244,106 @@ export function EditorShellPage() {
     }
   };
 
-  const handleCreateAiPlaceholder = () => {
-    setIsCreateModalOpen(false);
-    setSyncMessage(t('home.create.aiPlaceholderMessage'));
+  const handleAiFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setCreatePhotoFile(file);
+    setAiFlowMessage('');
+    setAiFlowStatus('idle');
+  };
+
+  const validateCreatePhotoFile = (file: File | null): string | null => {
+    if (!file) {
+      return t('home.create.ai.errors.noFileSelected');
+    }
+
+    if (!file.type.startsWith('image/')) {
+      return t('home.create.ai.errors.invalidMime');
+    }
+
+    if (file.size > MAX_SOURCE_IMAGE_SIZE_BYTES) {
+      return t('home.create.ai.errors.fileTooLarge', {
+        maxMb: Math.round(MAX_SOURCE_IMAGE_SIZE_BYTES / (1024 * 1024)),
+      });
+    }
+
+    return null;
+  };
+
+  const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  const handleCreateFromPhoto = async () => {
+    const validationError = validateCreatePhotoFile(createPhotoFile);
+    if (validationError) {
+      setAiFlowStatus('failed');
+      setAiFlowMessage(validationError);
+      return;
+    }
+
+    const file = createPhotoFile;
+    if (!file) {
+      return;
+    }
+
+    setIsAiFlowRunning(true);
+    setAiFlowMessage('');
+    setAiFlowStatus('uploading');
+
+    try {
+      const createdDrawing = await createDrawingInBackend(config.apiBaseUrl, {
+        title: t('home.create.defaultTitle'),
+        sourceType: 'photo',
+        locale: i18n.language,
+      });
+
+      const uploadedFile = await uploadSourceImage(config.apiBaseUrl, file);
+
+      setAiFlowStatus('starting');
+      const recognition = await startRecognitionJob(config.apiBaseUrl, {
+        drawingId: createdDrawing.id,
+        fileId: uploadedFile.id,
+      });
+
+      setAiFlowStatus('processing');
+      let attempts = 0;
+      let isCompleted = false;
+      while (attempts < RECOGNITION_MAX_POLL_ATTEMPTS) {
+        attempts += 1;
+
+        const status = await getRecognitionJobStatus(config.apiBaseUrl, recognition.jobId);
+        if (status.status === 'completed') {
+          isCompleted = true;
+          break;
+        }
+
+        if (status.status === 'failed') {
+          throw new Error(t('home.create.ai.errors.recognitionFailed'));
+        }
+
+        await sleep(RECOGNITION_POLL_INTERVAL_MS);
+      }
+
+      if (!isCompleted) {
+        throw new Error(t('home.create.ai.errors.recognitionTimeout'));
+      }
+
+      setAiFlowStatus('fetchingResult');
+      await getRecognitionJobResult(config.apiBaseUrl, recognition.jobId);
+
+      setAiFlowStatus('openingDrawing');
+      await refreshDrawingsList();
+      setIsCreateModalOpen(false);
+      resetCreateModalState();
+      await openDrawingById(createdDrawing.id);
+    } catch (error) {
+      setAiFlowStatus('failed');
+      setAiFlowMessage(
+        t('home.create.ai.errors.flowFailed', {
+          message: error instanceof Error ? error.message : t('home.errors.unknown'),
+        }),
+      );
+    } finally {
+      setIsAiFlowRunning(false);
+    }
   };
 
   const handleSaveDrawing = async () => {
@@ -928,7 +1067,7 @@ export function EditorShellPage() {
             <p>{t('home.subtitle')}</p>
           </div>
           <div className="drawings-home__header-actions">
-            <button type="button" onClick={() => setIsCreateModalOpen(true)}>
+            <button type="button" onClick={openCreateModal}>
               {t('home.create.openAction')}
             </button>
             <LanguageSwitcher />
@@ -942,7 +1081,7 @@ export function EditorShellPage() {
             <div className="drawings-home__empty">
               <p>{t('home.emptyTitle')}</p>
               <p>{t('home.emptyDescription')}</p>
-              <button type="button" onClick={() => setIsCreateModalOpen(true)}>
+              <button type="button" onClick={openCreateModal}>
                 {t('home.create.openAction')}
               </button>
             </div>
@@ -970,19 +1109,77 @@ export function EditorShellPage() {
         {isCreateModalOpen ? (
           <div className="editor-modal" role="dialog" aria-modal="true">
             <div className="editor-modal__card">
-              <h2>{t('home.create.modalTitle')}</h2>
-              <p>{t('home.create.modalDescription')}</p>
-              <div className="editor-modal__actions">
-                <button type="button" onClick={() => void handleCreateBlankDrawing()}>
-                  {t('home.create.blankAction')}
-                </button>
-                <button type="button" onClick={handleCreateAiPlaceholder}>
-                  {t('home.create.aiAction')}
-                </button>
-                <button type="button" onClick={() => setIsCreateModalOpen(false)}>
-                  {t('home.create.cancelAction')}
-                </button>
-              </div>
+              {createModalMode === 'choice' ? (
+                <>
+                  <h2>{t('home.create.modalTitle')}</h2>
+                  <p>{t('home.create.modalDescription')}</p>
+                  <div className="editor-modal__actions">
+                    <button type="button" onClick={() => void handleCreateBlankDrawing()}>
+                      {t('home.create.blankAction')}
+                    </button>
+                    <button type="button" onClick={() => setCreateModalMode('ai-upload')}>
+                      {t('home.create.aiAction')}
+                    </button>
+                    <button type="button" onClick={closeCreateModal}>
+                      {t('home.create.cancelAction')}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2>{t('home.create.ai.title')}</h2>
+                  <p>{t('home.create.ai.description')}</p>
+                  <div className="editor-modal__instructions">
+                    <p>{t('home.create.ai.instructions.title')}</p>
+                    <ul>
+                      <li>{t('home.create.ai.instructions.item1')}</li>
+                      <li>{t('home.create.ai.instructions.item2')}</li>
+                      <li>{t('home.create.ai.instructions.item3')}</li>
+                    </ul>
+                  </div>
+
+                  <label className="editor-modal__file-input">
+                    <span>{t('home.create.ai.fileLabel')}</span>
+                    <input type="file" accept="image/*" onChange={handleAiFileChange} />
+                  </label>
+
+                  {createPhotoFile ? (
+                    <p>{t('home.create.ai.selectedFile', { name: createPhotoFile.name })}</p>
+                  ) : (
+                    <p>{t('home.create.ai.noFile')}</p>
+                  )}
+
+                  <div className="editor-modal__status">
+                    <span>{t(`home.create.ai.status.${aiFlowStatus}`)}</span>
+                    {aiFlowMessage ? <span>{aiFlowMessage}</span> : null}
+                  </div>
+
+                  <div className="editor-modal__actions">
+                    <button type="button" onClick={() => void handleCreateFromPhoto()} disabled={isAiFlowRunning}>
+                      {isAiFlowRunning
+                        ? t('home.create.ai.startActionRunning')
+                        : t('home.create.ai.startAction')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isAiFlowRunning) {
+                          return;
+                        }
+                        setCreateModalMode('choice');
+                        setAiFlowStatus('idle');
+                        setAiFlowMessage('');
+                      }}
+                      disabled={isAiFlowRunning}
+                    >
+                      {t('home.create.ai.backAction')}
+                    </button>
+                    <button type="button" onClick={closeCreateModal} disabled={isAiFlowRunning}>
+                      {t('home.create.cancelAction')}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         ) : null}

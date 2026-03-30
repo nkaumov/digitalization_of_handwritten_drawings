@@ -19,14 +19,47 @@
       "modalTitle": "Create drawing",
       "modalDescription": "Choose how to start.",
       "blankAction": "Blank drawing",
-      "aiAction": "AI placeholder",
+      "aiAction": "From photo (AI)",
       "cancelAction": "Cancel",
       "defaultTitle": "New drawing",
-      "aiPlaceholderMessage": "AI mode placeholder is prepared; integration is not active yet."
+      "ai": {
+        "title": "Create from photo",
+        "description": "Upload a handwritten drawing photo to start recognition.",
+        "fileLabel": "Image file",
+        "selectedFile": "Selected file: {{name}}",
+        "noFile": "No file selected yet.",
+        "startAction": "Upload and recognize",
+        "startActionRunning": "Processing...",
+        "backAction": "Back",
+        "instructions": {
+          "title": "Photo quality tips:",
+          "item1": "Avoid strong perspective tilt and glare.",
+          "item2": "Lines and dimensions should be clearly readable.",
+          "item3": "Prefer a consistent dimension notation style."
+        },
+        "status": {
+          "idle": "Waiting for file selection.",
+          "uploading": "Uploading file to server...",
+          "starting": "Starting recognition...",
+          "processing": "Processing image...",
+          "fetchingResult": "Fetching recognition result...",
+          "openingDrawing": "Opening drawing in editor...",
+          "failed": "An error occurred."
+        },
+        "errors": {
+          "noFileSelected": "Select an image file first.",
+          "invalidMime": "Only image files are supported.",
+          "fileTooLarge": "File is too large. Maximum: {{maxMb}} MB.",
+          "recognitionFailed": "Recognition failed.",
+          "recognitionTimeout": "Recognition result timeout exceeded.",
+          "flowFailed": "Failed to create drawing from photo: {{message}}"
+        }
+      }
     },
     "errors": {
       "loadListFailed": "Failed to load drawings list: {{message}}",
-      "createFailed": "Failed to create drawing: {{message}}"
+      "createFailed": "Failed to create drawing: {{message}}",
+      "unknown": "unknown error"
     }
   },
   "editor": {
