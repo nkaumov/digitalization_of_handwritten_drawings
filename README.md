@@ -20,6 +20,7 @@
 - Этап 6 закрыт по факту как рабочий ручной редактор в принятой line-first UX-модели.
 - Этап 7 закрыт по факту в части create-flow (blank + photo upload через backend placeholder распознавания).
 - Этап 8 закрыт по факту как AI-инфраструктурный каркас (endpoint, pipeline runner, конфиг стадий, debug, local test).
+- Этап 9 в работе: подготовлен preprocessing-каркас и debug-артефакты, без реальной обработки изображений.
 
 ## Структура проекта
 
@@ -85,6 +86,7 @@
 
 - OCR/OpenCV и реальный recognition pipeline.
 - Реальная интеграция backend ↔ ai-service (вызов внешнего AI-service вместо backend placeholder-flow).
+- Реальная preprocessing-логика и тестовый набор для сравнения качества предобработки (этап 9).
 
 ## Что готово по этапу 4 (каркас)
 
@@ -171,3 +173,14 @@
 ## Статус этапа 8
 
 - Этап 8 закрыт по факту как инфраструктурный каркас (без OCR/OpenCV и реальных моделей).
+
+## Что готово по этапу 9 (preprocessing)
+
+- В `apps/ai-service` добавлен preprocessing context (metadata + outputs).
+- Реализованы placeholder стадии: `normalize-image`, `denoise-image`, `deskew-image`, `prepare-line-image`, `prepare-text-image`.
+- Сохраняются debug-артефакты нормализации/денойза/дескейва и входов для line/text detection.
+- Добавлены `preprocess-summary` snapshots для удобного сравнения результатов предобработки между стадиями.
+
+## Статус этапа 9
+
+- Этап 9 не закрыт: нет реальной обработки изображений и тестового набора для сравнения качества предобработки.
