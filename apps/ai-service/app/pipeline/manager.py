@@ -93,7 +93,8 @@ class PipelineManager:
 
         for index, descriptor in enumerate(stage_descriptors, start=1):
             stage_name = descriptor.stage_name
-            stage_started_at_iso = datetime.now(timezone.utc).isoformat()
+            stage_started_at = datetime.now(timezone.utc)
+            stage_started_at_iso = stage_started_at.isoformat()
             current_context["runtime"].update(
                 {
                     "current_stage": stage_name,
@@ -133,6 +134,10 @@ class PipelineManager:
                     "runtime": current_context["runtime"],
                 }
                 output = descriptor.handler(stage_input)
+                stage_finished_at = datetime.now(timezone.utc)
+                stage_duration_ms = int(
+                    (stage_finished_at - stage_started_at).total_seconds() * 1000
+                )
 
                 if "context" in output:
                     current_context = output["context"]
@@ -166,6 +171,13 @@ class PipelineManager:
 
                 current_context["stage_trace"].append(stage_name)
                 completed.append(stage_name)
+                current_context["stage_notes"].append(
+                    {
+                        "stage": stage_name,
+                        "message": f"Stage completed in {stage_duration_ms}ms",
+                        "level": "info",
+                    }
+                )
 
                 self._emit_hook(
                     "after-stage-run",
@@ -186,9 +198,17 @@ class PipelineManager:
                         "run_id": run_id,
                         "stage": stage_name,
                         "stage_index": index,
+                        "duration_ms": stage_duration_ms,
                     },
                 )
             except Exception as exc:  # noqa: BLE001
+                current_context["stage_notes"].append(
+                    {
+                        "stage": stage_name,
+                        "message": "Stage failed with exception",
+                        "level": "error",
+                    }
+                )
                 error = PipelineStageError(
                     chain_id=chain_id_value,
                     stage=stage_name,

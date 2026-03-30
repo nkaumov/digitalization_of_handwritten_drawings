@@ -24,6 +24,14 @@ storage/exports/*
 storage/debug/*
 !storage/debug/.gitkeep
 
+# API-local runtime storage contents (keep folders only)
+apps/api/storage/uploads/*
+!apps/api/storage/uploads/.gitkeep
+apps/api/storage/exports/*
+!apps/api/storage/exports/.gitkeep
+apps/api/storage/debug/*
+!apps/api/storage/debug/.gitkeep
+
 # Local terminal logs
 logs/*
 !logs/.gitkeep

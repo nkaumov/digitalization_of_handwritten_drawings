@@ -36,3 +36,24 @@ npm run dev:ai
 
 Health endpoint:
 - http://127.0.0.1:8001/health
+
+## Local pipeline test run
+
+Full run (placeholder stages):
+
+```bash
+python -m app.pipeline.cli C:\path\to\image.jpg --drawing-id drawing_local
+```
+
+List stages:
+
+```bash
+python -m app.pipeline.cli --list-stages
+```
+
+Step debug (single stage or up to stage):
+
+```bash
+python -m app.pipeline.cli C:\path\to\image.jpg --stage detect-lines --step
+python -m app.pipeline.cli C:\path\to\image.jpg --until find-contours --pause
+```

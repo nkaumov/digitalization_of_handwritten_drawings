@@ -124,6 +124,47 @@ body {
   gap: 8px;
 }
 
+.editor-modal__instructions {
+  border: 1px solid #d7e0ee;
+  border-radius: 10px;
+  background: #f8fbff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-modal__instructions ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-modal__file-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-modal__file-input input[type='file'] {
+  border: 1px solid #b8c6dc;
+  border-radius: 8px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+.editor-modal__status {
+  border: 1px solid #d3ddec;
+  border-radius: 10px;
+  background: #f3f7fe;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .editor-workspace {
   min-height: 100dvh;
   display: grid;
