@@ -27,6 +27,7 @@ DebugArtifactKind = Literal[
     "deskewed-image",
     "line-detection-input",
     "text-detection-input",
+    "preprocess-summary",
     "detected-lines",
     "detected-text",
     "parsed-dimensions",

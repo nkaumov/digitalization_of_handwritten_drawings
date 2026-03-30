@@ -2,7 +2,11 @@
 
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.pipeline.preprocess import add_preprocess_output, build_preprocess_context
+from app.pipeline.preprocess import (
+    add_preprocess_output,
+    build_preprocess_context,
+    persist_preprocess_snapshot,
+)
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
 
 logger = get_logger(__name__)
@@ -70,6 +74,12 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
     if debug_path:
         debug_artifact["path"] = debug_path
 
+    snapshot_path = persist_preprocess_snapshot(
+        preprocess,
+        runtime=context.get("runtime"),
+        stage="normalize-image",
+    )
+
     return {
         "context": context,
         "warnings": warnings,
@@ -81,6 +91,18 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
             }
         ],
         "debug_artifacts": [
-            debug_artifact
+            debug_artifact,
+            *(
+                [
+                    {
+                        "stage": "normalize-image",
+                        "kind": "preprocess-summary",
+                        "path": snapshot_path,
+                        "meta": {"stage": "normalize-image"},
+                    }
+                ]
+                if snapshot_path
+                else []
+            ),
         ],
     }

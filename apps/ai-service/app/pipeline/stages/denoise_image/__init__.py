@@ -2,7 +2,7 @@
 
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.pipeline.preprocess import add_preprocess_output
+from app.pipeline.preprocess import add_preprocess_output, persist_preprocess_snapshot
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
 
 logger = get_logger(__name__)
@@ -54,6 +54,12 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
 
     context["preprocess"] = preprocess
 
+    snapshot_path = persist_preprocess_snapshot(
+        preprocess,
+        runtime=context.get("runtime"),
+        stage="denoise-image",
+    )
+
     return {
         "context": context,
         "stage_notes": [
@@ -69,6 +75,18 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
                 "kind": "denoised-image",
                 "meta": {"placeholder": True, "path": debug_path},
                 **({"path": debug_path} if debug_path else {}),
-            }
+            },
+            *(
+                [
+                    {
+                        "stage": "denoise-image",
+                        "kind": "preprocess-summary",
+                        "path": snapshot_path,
+                        "meta": {"stage": "denoise-image"},
+                    }
+                ]
+                if snapshot_path
+                else []
+            ),
         ],
     }
