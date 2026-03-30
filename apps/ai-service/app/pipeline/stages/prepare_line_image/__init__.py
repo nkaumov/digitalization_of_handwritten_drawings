@@ -1,4 +1,4 @@
-"""Stage domain placeholder: prepare-line-image."""
+"""Stage domain: prepare-line-image."""
 
 from app.core.config import settings
 from app.core.logger import get_logger
@@ -8,6 +8,7 @@ from app.pipeline.preprocess import (
     persist_preprocess_snapshot,
 )
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
+from PIL import Image, ImageOps, ImageFilter, ImageStat
 
 logger = get_logger(__name__)
 
@@ -26,28 +27,41 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
     )
 
     debug_path = None
+    threshold_value = None
     if source_path and settings.debug_artifacts_enabled:
         from pathlib import Path
-        import shutil
 
         source = Path(source_path)
         if source.exists():
             target_dir = Path(settings.debug_artifacts_dir)
             target_dir.mkdir(parents=True, exist_ok=True)
-            target = target_dir / f"{source.stem}-line-input{source.suffix or '.bin'}"
+            target = target_dir / f"{source.stem}-line-input{source.suffix or '.png'}"
             try:
-                shutil.copyfile(source, target)
+                with Image.open(source) as image:
+                    gray = ImageOps.grayscale(image)
+                    contrast = ImageOps.autocontrast(gray)
+                    edges = contrast.filter(ImageFilter.FIND_EDGES)
+                    mean = ImageStat.Stat(edges).mean[0]
+                    threshold_value = max(30, min(220, int(mean)))
+                    binary = edges.point(lambda v: 255 if v > threshold_value else 0)
+                    binary.save(target)
                 debug_path = str(target)
                 add_preprocess_output(
                     preprocess,
                     kind="line-detection-input",
                     path=debug_path,
-                    note="placeholder line detection input",
+                    note="edges + threshold",
                 )
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 logger.warning(
-                    "Failed to store line input placeholder output",
+                    "Failed to store line input output",
                     extra={"path": str(target), "error": str(exc)},
+                )
+                add_preprocess_output(
+                    preprocess,
+                    kind="line-detection-input",
+                    path=None,
+                    note="line prep failed",
                 )
         else:
             add_preprocess_output(
@@ -85,7 +99,11 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
             {
                 "stage": "prepare-line-image",
                 "kind": "line-detection-input",
-                "meta": {"placeholder": True, "path": debug_path},
+                "meta": {
+                    "placeholder": False,
+                    "path": debug_path,
+                    "threshold": threshold_value,
+                },
                 **({"path": debug_path} if debug_path else {}),
             },
             *(
