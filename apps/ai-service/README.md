@@ -67,3 +67,13 @@ python apps/ai-service/scripts/run_preprocess_fixtures.py
 ```
 
 Fixtures live in `apps/ai-service/preprocess_fixtures`.
+
+## Stage 10 graph fixtures
+
+Local fixture set for checking graph/contour grouping:
+
+```bash
+python apps/ai-service/scripts/run_stage10_fixtures.py
+```
+
+Fixtures live in `apps/ai-service/graph_fixtures`.

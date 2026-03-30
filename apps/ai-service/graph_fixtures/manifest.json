@@ -1,0 +1,23 @@
+{
+  "version": "1",
+  "items": [
+    {
+      "id": "rectangle-01",
+      "path": "images/rectangle-01.png",
+      "expected": { "contours": 1, "closed": 1 },
+      "note": "simple rectangle"
+    },
+    {
+      "id": "l-shape-01",
+      "path": "images/l-shape-01.png",
+      "expected": { "contours": 1, "closed": 0 },
+      "note": "L-shaped open contour"
+    },
+    {
+      "id": "multi-contour-01",
+      "path": "images/multi-contour-01.png",
+      "expected": { "contours": 2, "closed": 2 },
+      "note": "two separate rectangles"
+    }
+  ]
+}
