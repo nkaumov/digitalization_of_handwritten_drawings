@@ -65,6 +65,8 @@ class PreprocessContext(TypedDict, total=False):
     modified_at_iso: str | None
     width: int | None
     height: int | None
+    image_format: str | None
+    color_mode: str | None
     notes: List[str]
     outputs: List[Dict[str, Any]]
 

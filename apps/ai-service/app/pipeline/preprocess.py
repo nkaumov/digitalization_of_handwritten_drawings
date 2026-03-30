@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app.pipeline.contracts import PreprocessContext
+from PIL import Image
 
 
 def _to_iso(ts: float | None) -> str | None:
@@ -36,11 +37,25 @@ def build_preprocess_context(image_path: str) -> PreprocessContext:
             "modified_at_iso": None,
             "width": None,
             "height": None,
+            "image_format": None,
+            "color_mode": None,
             "notes": notes,
             "outputs": outputs,
         }
 
     stat = path.stat()
+    width: int | None = None
+    height: int | None = None
+    image_format: str | None = None
+    color_mode: str | None = None
+    try:
+        with Image.open(path) as image:
+            width, height = image.size
+            image_format = image.format
+            color_mode = image.mode
+    except (OSError, ValueError) as exc:
+        notes.append(f"image metadata read failed: {exc}")
+
     return {
         "image_path": image_path,
         "exists": True,
@@ -49,8 +64,10 @@ def build_preprocess_context(image_path: str) -> PreprocessContext:
         "extension": path.suffix.lower() or None,
         "created_at_iso": _to_iso(stat.st_ctime),
         "modified_at_iso": _to_iso(stat.st_mtime),
-        "width": None,
-        "height": None,
+        "width": width,
+        "height": height,
+        "image_format": image_format,
+        "color_mode": color_mode,
         "notes": notes,
         "outputs": outputs,
     }
