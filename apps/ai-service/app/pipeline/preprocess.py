@@ -69,3 +69,11 @@ def add_preprocess_output(
             "note": note,
         }
     )
+
+
+def get_latest_output_path(preprocess: PreprocessContext, kind: str) -> str | None:
+    outputs = preprocess.get("outputs") or []
+    for item in reversed(outputs):
+        if item.get("kind") == kind and item.get("path"):
+            return str(item.get("path"))
+    return None

@@ -24,6 +24,9 @@ class StageNote(TypedDict, total=False):
 DebugArtifactKind = Literal[
     "normalized-image",
     "denoised-image",
+    "deskewed-image",
+    "line-detection-input",
+    "text-detection-input",
     "detected-lines",
     "detected-text",
     "parsed-dimensions",
