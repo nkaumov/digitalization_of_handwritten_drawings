@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     pipeline_stage_order: str | None = Field(default=None)
     pipeline_disabled_stages: str | None = Field(default=None)
     pipeline_continue_on_stage_failure: bool = Field(default=True)
+    debug_artifacts_enabled: bool = Field(default=True)
+    debug_artifacts_dir: str = Field(default="storage/debug/ai-service")
 
 
 settings = Settings()

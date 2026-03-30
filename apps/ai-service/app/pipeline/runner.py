@@ -4,6 +4,7 @@ from app.pipeline.manager import PipelineManager
 from app.pipeline.hooks_registry import build_placeholder_hook_manager
 from app.pipeline.stages.implementations import build_default_stage_catalog
 from app.pipeline.stages.registry import build_pipeline_stage_registry
+from app.pipeline.debug_store import persist_debug_bundle
 from app.pipeline.types import PipelineStageResult
 
 
@@ -46,4 +47,14 @@ class PipelineRunner:
                 "confidence": None,
             },
         }
-        return self._manager.run(context, triggered_by=triggered_by)
+        result = self._manager.run(context, triggered_by=triggered_by)
+        if settings.debug_artifacts_enabled:
+            path = persist_debug_bundle(result, settings.debug_artifacts_dir)
+            result.context.setdefault("debug_artifacts", []).append(
+                {
+                    "kind": "generic",
+                    "path": path,
+                    "meta": {"source": "pipeline-debug-bundle"},
+                }
+            )
+        return result
