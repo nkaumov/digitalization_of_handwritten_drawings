@@ -1,7 +1,11 @@
 """Stage domain placeholder: normalize-image."""
 
-from app.pipeline.preprocess import build_preprocess_context
+from app.core.config import settings
+from app.core.logger import get_logger
+from app.pipeline.preprocess import add_preprocess_output, build_preprocess_context
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
+
+logger = get_logger(__name__)
 
 
 def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
@@ -21,6 +25,37 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
             }
         )
 
+    debug_path = None
+    if image_path and preprocess.get("exists") and settings.debug_artifacts_enabled:
+        from pathlib import Path
+        import shutil
+
+        source = Path(image_path)
+        target_dir = Path(settings.debug_artifacts_dir)
+        target_dir.mkdir(parents=True, exist_ok=True)
+        target = target_dir / f"{source.stem}-normalized{source.suffix or '.bin'}"
+        try:
+            shutil.copyfile(source, target)
+            debug_path = str(target)
+            add_preprocess_output(
+                preprocess,
+                kind="normalized-image",
+                path=debug_path,
+                note="placeholder normalization output",
+            )
+        except OSError as exc:
+            logger.warning(
+                "Failed to store normalized placeholder output",
+                extra={"path": str(target), "error": str(exc)},
+            )
+    else:
+        add_preprocess_output(
+            preprocess,
+            kind="normalized-image",
+            path=None,
+            note="debug artifacts disabled or file missing",
+        )
+
     debug_artifact = {
         "stage": "normalize-image",
         "kind": "normalized-image",
@@ -29,10 +64,11 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
             "exists": preprocess.get("exists"),
             "size_bytes": preprocess.get("size_bytes"),
             "mime_type": preprocess.get("mime_type"),
+            "path": debug_path,
         },
     }
-    if image_path:
-        debug_artifact["path"] = image_path
+    if debug_path:
+        debug_artifact["path"] = debug_path
 
     return {
         "context": context,

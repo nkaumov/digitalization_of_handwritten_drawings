@@ -8,6 +8,7 @@ from app.pipeline.stages.assemble_result import run as run_assemble_result
 from app.pipeline.stages.build_graph import run as run_build_graph
 from app.pipeline.stages.detect_lines import run as run_detect_lines
 from app.pipeline.stages.detect_text import run as run_detect_text
+from app.pipeline.stages.denoise_image import run as run_denoise_image
 from app.pipeline.stages.find_contours import run as run_find_contours
 from app.pipeline.stages.normalize_image import run as run_normalize_image
 from app.pipeline.stages.normalize_units import run as run_normalize_units
@@ -34,6 +35,7 @@ class StageImplementationCatalog:
 def build_default_stage_catalog() -> StageImplementationCatalog:
     catalog = StageImplementationCatalog()
     catalog.register("normalize-image", "placeholder", run_normalize_image)
+    catalog.register("denoise-image", "placeholder", run_denoise_image)
     catalog.register("detect-lines", "placeholder", run_detect_lines)
     catalog.register("detect-text", "placeholder", run_detect_text)
     catalog.register("parse-dimensions", "placeholder", run_parse_dimensions)

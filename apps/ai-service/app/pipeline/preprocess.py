@@ -16,6 +16,7 @@ def _to_iso(ts: float | None) -> str | None:
 def build_preprocess_context(image_path: str) -> PreprocessContext:
     path = Path(image_path)
     notes: list[str] = []
+    outputs: list[dict[str, str | None]] = []
     mime_type = mimetypes.guess_type(path.name)[0]
 
     if not path.exists():
@@ -31,6 +32,7 @@ def build_preprocess_context(image_path: str) -> PreprocessContext:
             "width": None,
             "height": None,
             "notes": notes,
+            "outputs": outputs,
         }
 
     stat = path.stat()
@@ -45,4 +47,25 @@ def build_preprocess_context(image_path: str) -> PreprocessContext:
         "width": None,
         "height": None,
         "notes": notes,
+        "outputs": outputs,
     }
+
+
+def add_preprocess_output(
+    preprocess: PreprocessContext,
+    *,
+    kind: str,
+    path: str | None,
+    note: str | None = None,
+) -> None:
+    outputs = preprocess.get("outputs")
+    if outputs is None:
+        outputs = []
+        preprocess["outputs"] = outputs
+    outputs.append(
+        {
+            "kind": kind,
+            "path": path,
+            "note": note,
+        }
+    )

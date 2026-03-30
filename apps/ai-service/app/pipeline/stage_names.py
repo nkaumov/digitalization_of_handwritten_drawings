@@ -2,6 +2,7 @@ from typing import Literal
 
 PipelineStageName = Literal[
     "normalize-image",
+    "denoise-image",
     "detect-lines",
     "detect-text",
     "parse-dimensions",
@@ -13,6 +14,7 @@ PipelineStageName = Literal[
 
 PIPELINE_STAGE_ORDER: tuple[PipelineStageName, ...] = (
     "normalize-image",
+    "denoise-image",
     "detect-lines",
     "detect-text",
     "parse-dimensions",

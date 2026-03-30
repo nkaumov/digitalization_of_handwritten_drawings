@@ -23,6 +23,7 @@ class StageNote(TypedDict, total=False):
 
 DebugArtifactKind = Literal[
     "normalized-image",
+    "denoised-image",
     "detected-lines",
     "detected-text",
     "parsed-dimensions",
@@ -61,6 +62,7 @@ class PreprocessContext(TypedDict, total=False):
     width: int | None
     height: int | None
     notes: List[str]
+    outputs: List[Dict[str, Any]]
 
 
 class PipelineContext(TypedDict, total=False):
