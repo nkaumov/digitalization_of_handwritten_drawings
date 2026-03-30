@@ -1,6 +1,9 @@
+from app.core.config import settings
+from app.pipeline.config import build_pipeline_config
 from app.pipeline.manager import PipelineManager
 from app.pipeline.hooks_registry import build_placeholder_hook_manager
-from app.pipeline.stages.registry import build_placeholder_stage_registry
+from app.pipeline.stages.implementations import build_default_stage_catalog
+from app.pipeline.stages.registry import build_pipeline_stage_registry
 from app.pipeline.types import PipelineStageResult
 
 
@@ -8,8 +11,11 @@ class PipelineRunner:
     """Facade runner using the pipeline manager with placeholder stage registry."""
 
     def __init__(self) -> None:
+        config = build_pipeline_config(settings)
+        registry = build_pipeline_stage_registry(config, catalog=build_default_stage_catalog())
         self._manager = PipelineManager(
-            build_placeholder_stage_registry(),
+            registry,
+            continue_on_stage_failure=config.continue_on_stage_failure,
             hook_manager=build_placeholder_hook_manager(),
         )
 

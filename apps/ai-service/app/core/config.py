@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO")
     env: str = Field(default="development")
     title: str = Field(default="AI Service MVP Skeleton")
+    pipeline_stage_order: str | None = Field(default=None)
+    pipeline_disabled_stages: str | None = Field(default=None)
+    pipeline_continue_on_stage_failure: bool = Field(default=True)
 
 
 settings = Settings()
