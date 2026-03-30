@@ -125,6 +125,7 @@ endpoint экспорта в PDF и endpoint экспорта в изображ�
 - Реализованы отдельные outputs для `prepare-line-image` и `prepare-text-image`.
 - Сохраняются debug-артефакты нормализации/денойза/дескейва и входов для line/text detection.
 - Добавлены `preprocess-summary` snapshots для сравнения результатов предобработки между стадиями.
+- Добавлен локальный fixture workflow и отчет сравнения (manifest + скрипт + reports).
 
 ### Статус этапа
-- Этап 9 не закрыт: отсутствует тестовый набор и формализованное сравнение качества предобработки.
+- Этап 9 закрыт по факту в рамках preprocessing (без line detection/OCR).
