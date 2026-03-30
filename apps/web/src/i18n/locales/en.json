@@ -1,28 +1,103 @@
-{
+﻿{
   "app": {
     "title": "Drawing Editor MVP",
-    "subtitle": "Frontend skeleton"
-  },
-  "layout": {
-    "header": "Header",
-    "sidebar": "Sidebar",
-    "editor": "Editor Area",
-    "status": "Status Bar"
-  },
-  "sections": {
-    "headerPlaceholder": "Top application controls placeholder",
-    "sidebarPlaceholder": "Tools and entities panel placeholder",
-    "editorPlaceholder": "Editor canvas placeholder",
-    "statusPlaceholder": "Runtime and integration status placeholder"
+    "subtitle": "Frontend shell"
   },
   "language": {
     "label": "Language",
     "ru": "Russian",
     "en": "English"
   },
-  "status": {
-    "api": "API: {{url}}",
-    "locale": "Locale: {{locale}}"
+  "home": {
+    "title": "Drawings",
+    "subtitle": "Start from list and create a new drawing.",
+    "loading": "Loading drawings...",
+    "emptyTitle": "No drawings yet",
+    "emptyDescription": "Create your first drawing to start working in the editor.",
+    "create": {
+      "openAction": "Create",
+      "modalTitle": "Create drawing",
+      "modalDescription": "Choose how to start.",
+      "blankAction": "Blank drawing",
+      "aiAction": "AI placeholder",
+      "cancelAction": "Cancel",
+      "defaultTitle": "New drawing",
+      "aiPlaceholderMessage": "AI mode placeholder is prepared; integration is not active yet."
+    },
+    "errors": {
+      "loadListFailed": "Failed to load drawings list: {{message}}",
+      "createFailed": "Failed to create drawing: {{message}}"
+    }
+  },
+  "editor": {
+    "canvas": {
+      "ariaLabel": "Editor canvas",
+      "deleteSegmentAction": "Delete",
+      "disconnectSegmentsAction": "Disconnect"
+    },
+    "selection": {
+      "none": "Nothing selected",
+      "point": "Point {{pointId}} ({{contourId}})",
+      "segment": "Segment {{segmentId}} ({{contourId}})",
+      "twoPoints": "Points {{first}} and {{second}}",
+      "twoSegments": "Selected segments: {{count}}"
+    },
+    "sync": {
+      "messages": {
+        "loadSuccess": "Drawing loaded.",
+        "saveSuccess": "Drawing saved."
+      },
+      "errors": {
+        "noDrawingSelected": "Open a drawing from the list first.",
+        "loadFailed": "Load failed: {{message}}",
+        "saveFailed": "Save failed: {{message}}",
+        "lengthEditLocked": "Lock mode is enabled: length editing is blocked.",
+        "topologyChangeLocked": "Lock mode is enabled: connect/disconnect is blocked.",
+        "disconnectPairNotFound": "No connected segment pair found to disconnect."
+      }
+    },
+    "top": {
+      "backToList": "Back",
+      "saveAction": "Save",
+      "savingAction": "Saving...",
+      "deleteAction": "Delete",
+      "disconnectAction": "Disconnect",
+      "dimensionLockAction": "Lock dimension",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Drawing title",
+      "warningOk": "Geometry is OK",
+      "warningAlert": "Warnings: {{count}}"
+    },
+    "subbar": {
+      "undoIcon": "↶",
+      "redoIcon": "↷",
+      "dimensionLabel": "Dimension",
+      "dimensionPlaceholder": "Value",
+      "angleLabel": "Angle",
+      "anglePlaceholder": "Degrees",
+      "connectedSegmentReadOnly": "Segment is connected: length/angle editing is locked",
+      "noDimension": "Select segment with dimension"
+    },
+    "left": {
+      "segmentsTitle": "Segments",
+      "geometryModuleTitle": "Geometry",
+      "addDefaultLineAction": "Add default line",
+      "addRectangleAction": "Add rectangle",
+      "addDefaultLinePrompt": "Enter new segment length (mm)",
+      "addRectangleWidthPrompt": "Enter rectangle width (mm)",
+      "addRectangleLengthPrompt": "Enter rectangle length (mm)",
+      "addDefaultLineInvalid": "Invalid segment length.",
+      "addRectangleInvalid": "Invalid rectangle size.",
+      "idleMessage": "No messages"
+    },
+    "bottom": {
+      "zoomOut": "-",
+      "zoomIn": "+",
+      "reset": "Reset",
+      "zoomValue": "Zoom {{value}}x",
+      "contours": "Contours: {{count}}",
+      "warnings": "Warnings: {{count}}"
+    }
   },
   "errors": {
     "title": "Unexpected UI error",
@@ -30,3 +105,4 @@
     "action": "Reset view"
   }
 }
+

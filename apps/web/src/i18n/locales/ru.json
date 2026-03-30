@@ -1,32 +1,108 @@
-{
+﻿{
   "app": {
     "title": "Drawing Editor MVP",
     "subtitle": "Каркас frontend"
-  },
-  "layout": {
-    "header": "Шапка",
-    "sidebar": "Боковая панель",
-    "editor": "Область редактора",
-    "status": "Статус-бар"
-  },
-  "sections": {
-    "headerPlaceholder": "Заглушка верхних элементов управления",
-    "sidebarPlaceholder": "Заглушка панели инструментов и сущностей",
-    "editorPlaceholder": "Заглушка рабочей области редактора",
-    "statusPlaceholder": "Заглушка статуса окружения и интеграций"
   },
   "language": {
     "label": "Язык",
     "ru": "Русский",
     "en": "Английский"
   },
-  "status": {
-    "api": "API: {{url}}",
-    "locale": "Локаль: {{locale}}"
+  "home": {
+    "title": "Список чертежей",
+    "subtitle": "Стартовый экран со списком и созданием нового чертежа.",
+    "loading": "Загрузка списка чертежей...",
+    "emptyTitle": "Список пока пуст",
+    "emptyDescription": "Создайте первый чертеж, чтобы перейти в редактор.",
+    "create": {
+      "openAction": "Создать",
+      "modalTitle": "Создание чертежа",
+      "modalDescription": "Выберите режим старта.",
+      "blankAction": "Пустой чертеж",
+      "aiAction": "Заглушка AI",
+      "cancelAction": "Отмена",
+      "defaultTitle": "Новый чертеж",
+      "aiPlaceholderMessage": "Заглушка AI готова, но интеграция пока не активна."
+    },
+    "errors": {
+      "loadListFailed": "Ошибка загрузки списка чертежей: {{message}}",
+      "createFailed": "Ошибка создания чертежа: {{message}}"
+    }
+  },
+  "editor": {
+    "canvas": {
+      "ariaLabel": "Холст редактора",
+      "deleteSegmentAction": "Удалить",
+      "disconnectSegmentsAction": "Разъединить"
+    },
+    "selection": {
+      "none": "Ничего не выбрано",
+      "point": "Точка {{pointId}} ({{contourId}})",
+      "segment": "Сегмент {{segmentId}} ({{contourId}})",
+      "twoPoints": "Точки {{first}} и {{second}}",
+      "twoSegments": "Выбрано сегментов: {{count}}"
+    },
+    "sync": {
+      "messages": {
+        "loadSuccess": "Чертеж загружен.",
+        "saveSuccess": "Чертеж сохранен."
+      },
+      "errors": {
+        "noDrawingSelected": "Сначала откройте чертеж из списка.",
+        "loadFailed": "Ошибка загрузки: {{message}}",
+        "saveFailed": "Ошибка сохранения: {{message}}",
+        "lengthEditLocked": "Режим фиксации: изменение длины запрещено.",
+        "topologyChangeLocked": "Режим фиксации: стыковка и разъединение отключены.",
+        "disconnectPairNotFound": "Не удалось найти пару соединенных сегментов для разъединения."
+      }
+    },
+    "top": {
+      "backToList": "К списку",
+      "saveAction": "Сохранить",
+      "savingAction": "Сохранение...",
+      "deleteAction": "Удалить",
+      "disconnectAction": "Разъединить",
+      "dimensionLockAction": "Зафиксировать размер",
+      "titleLabel": "Название",
+      "titlePlaceholder": "Название чертежа",
+      "warningOk": "Геометрия без предупреждений",
+      "warningAlert": "Предупреждения: {{count}}"
+    },
+    "subbar": {
+      "undoIcon": "↶",
+      "redoIcon": "↷",
+      "dimensionLabel": "Размер",
+      "dimensionPlaceholder": "Значение",
+      "angleLabel": "Угол",
+      "anglePlaceholder": "Градусы",
+      "connectedSegmentReadOnly": "Сегмент в соединении: изменение размера/угла заблокировано",
+      "noDimension": "Выберите сегмент с размером"
+    },
+    "left": {
+      "segmentsTitle": "Сегменты",
+      "geometryModuleTitle": "Геометрия",
+      "addDefaultLineAction": "Добавить дефолтную линию",
+      "addRectangleAction": "Добавить прямоугольник",
+      "addDefaultLinePrompt": "Введите длину нового сегмента (мм)",
+      "addRectangleWidthPrompt": "Введите ширину прямоугольника (мм)",
+      "addRectangleLengthPrompt": "Введите длину прямоугольника (мм)",
+      "addDefaultLineInvalid": "Некорректная длина сегмента.",
+      "addRectangleInvalid": "Некорректные размеры прямоугольника.",
+      "idleMessage": "Сообщений нет"
+    },
+    "bottom": {
+      "zoomOut": "-",
+      "zoomIn": "+",
+      "reset": "Сброс",
+      "zoomValue": "Масштаб {{value}}x",
+      "contours": "Контуры: {{count}}",
+      "warnings": "Предупреждения: {{count}}"
+    }
   },
   "errors": {
     "title": "Неожиданная ошибка интерфейса",
-    "description": "Перезагрузите страницу или сбросьте экран.",
+    "description": "Перезагрузите страницу или сбросьте этот экран.",
     "action": "Сбросить экран"
   }
 }
+
