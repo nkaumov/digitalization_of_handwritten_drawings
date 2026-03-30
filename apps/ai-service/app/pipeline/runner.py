@@ -13,20 +13,31 @@ class PipelineRunner:
             hook_manager=build_placeholder_hook_manager(),
         )
 
-    def run(self, image_path: str) -> PipelineStageResult:
+    def run(
+        self,
+        image_path: str,
+        *,
+        drawing_id: str,
+        target_unit: str = "mm",
+        meta: dict[str, str] | None = None,
+        triggered_by: str = "api.recognition.request",
+    ) -> PipelineStageResult:
         context = {
             "image_path": image_path,
-            "target_unit": "mm",
+            "drawing_id": drawing_id,
+            "target_unit": target_unit,
             "warnings": [],
             "stage_notes": [],
             "debug_artifacts": [],
             "stage_trace": [],
+            "meta": meta or {},
             "payload": {
                 "version": "1.0",
-                "unit": "mm",
+                "drawingId": drawing_id,
+                "unit": target_unit,
                 "contours": [],
                 "warnings": [],
                 "confidence": None,
             },
         }
-        return self._manager.run(context)
+        return self._manager.run(context, triggered_by=triggered_by)
