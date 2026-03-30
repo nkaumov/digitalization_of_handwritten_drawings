@@ -3,87 +3,101 @@
     "title": "Drawing Editor MVP",
     "subtitle": "Frontend shell"
   },
-  "editorShell": {
-    "header": {
-      "ariaLabel": "Application header",
-      "subtitle": "Stage 6 editor page shell without AI integration"
-    },
-    "sidebar": {
-      "ariaLabel": "Editor sidebar",
-      "toolsTitle": "Tools panel",
-      "toolsPlaceholder": "Basic manual geometry operations are enabled in this stage shell.",
-      "createLineAction": "Create line",
-      "connectPointsAction": "Connect points",
-      "deleteSegmentAction": "Delete segment",
-      "navigationTitle": "Viewport navigation",
-      "navigationPlaceholder": "Use drag for panning and mouse wheel for zoom; controls are available below.",
-      "zoomInAction": "Zoom in",
-      "zoomOutAction": "Zoom out",
-      "resetViewAction": "Reset view"
-    },
-    "workspace": {
-      "ariaLabel": "Visual editor workspace",
-      "title": "Working area",
-      "subtitle": "Viewport, grid, geometry layers, dimensions, and warning highlighting are active in this shell.",
-      "canvasAriaLabel": "Editor canvas"
-    },
-    "selection": {
-      "title": "Selection",
-      "description": "Point and segment selection is available for basic geometry editing.",
-      "none": "Nothing selected",
-      "point": "Point: contour={{contourId}}, id={{pointId}}",
-      "segment": "Segment: contour={{contourId}}, id={{segmentId}}",
-      "twoPoints": "Selected points: {{first}} and {{second}}",
-      "multiSelectHint": "Hold Shift and click points to select up to two points.",
-      "counts": "Contours={{contours}}, points={{points}}, segments={{segments}}"
-    },
-    "dimensions": {
-      "ariaLabel": "Dimensions panel",
-      "title": "Dimensions",
-      "description": "Edit numeric labels bound to segments.",
-      "itemLabel": "Contour={{contourId}}, segment={{segmentId}}",
-      "inputPlaceholder": "Dimension value",
-      "resolved": "Resolved",
-      "unresolved": "Unresolved"
-    },
-    "warnings": {
-      "ariaLabel": "Geometry warnings",
-      "title": "Geometry warnings",
-      "description": "Basic geometry checks for stage 6 editor shell.",
-      "none": "No geometry warnings",
-      "item": "{{code}} in contour {{contourId}}",
-      "codes": {
-        "geometry.contour_open": "Contour is not closed",
-        "geometry.segment_broken_reference": "Segment has broken point reference",
-        "geometry.segment_too_short": "Segment is too short",
-        "geometry.point_degree_invalid": "Point connectivity is invalid"
-      }
-    },
-    "history": {
-      "ariaLabel": "Action history",
-      "title": "History architecture point",
-      "placeholder": "Undo/redo integration point is initialized; action wiring is pending.",
-      "undoAction": "Undo",
-      "redoAction": "Redo"
-    },
-    "status": {
-      "ariaLabel": "Editor status bar",
-      "title": "Status",
-      "api": "API: {{url}}",
-      "locale": "Locale: {{locale}}",
-      "zoom": "Zoom: {{value}}x",
-      "viewportOffset": "Viewport offset: x={{x}}, y={{y}}",
-      "selected": "Selected: {{value}}",
-      "closure": "Contour closure: closed={{closed}}, open={{open}}",
-      "dimensions": "Dimensions: total={{total}}, unresolved={{unresolved}}",
-      "geometryWarnings": "Geometry warnings: {{count}}",
-      "historyState": "History stack: undo={{undoCount}}, redo={{redoCount}}"
-    }
-  },
   "language": {
     "label": "Language",
     "ru": "Russian",
     "en": "English"
+  },
+  "home": {
+    "title": "Drawings",
+    "subtitle": "Start from list and create a new drawing.",
+    "loading": "Loading drawings...",
+    "emptyTitle": "No drawings yet",
+    "emptyDescription": "Create your first drawing to start working in the editor.",
+    "create": {
+      "openAction": "Create",
+      "modalTitle": "Create drawing",
+      "modalDescription": "Choose how to start.",
+      "blankAction": "Blank drawing",
+      "aiAction": "AI placeholder",
+      "cancelAction": "Cancel",
+      "defaultTitle": "New drawing",
+      "aiPlaceholderMessage": "AI mode placeholder is prepared; integration is not active yet."
+    },
+    "errors": {
+      "loadListFailed": "Failed to load drawings list: {{message}}",
+      "createFailed": "Failed to create drawing: {{message}}"
+    }
+  },
+  "editor": {
+    "canvas": {
+      "ariaLabel": "Editor canvas",
+      "deleteSegmentAction": "Delete",
+      "disconnectSegmentsAction": "Disconnect"
+    },
+    "selection": {
+      "none": "Nothing selected",
+      "point": "Point {{pointId}} ({{contourId}})",
+      "segment": "Segment {{segmentId}} ({{contourId}})",
+      "twoPoints": "Points {{first}} and {{second}}",
+      "twoSegments": "Selected segments: {{count}}"
+    },
+    "sync": {
+      "messages": {
+        "loadSuccess": "Drawing loaded.",
+        "saveSuccess": "Drawing saved."
+      },
+      "errors": {
+        "noDrawingSelected": "Open a drawing from the list first.",
+        "loadFailed": "Load failed: {{message}}",
+        "saveFailed": "Save failed: {{message}}",
+        "lengthEditLocked": "Lock mode is enabled: length editing is blocked.",
+        "topologyChangeLocked": "Lock mode is enabled: connect/disconnect is blocked.",
+        "disconnectPairNotFound": "No connected segment pair found to disconnect."
+      }
+    },
+    "top": {
+      "backToList": "Back",
+      "saveAction": "Save",
+      "savingAction": "Saving...",
+      "deleteAction": "Delete",
+      "disconnectAction": "Disconnect",
+      "dimensionLockAction": "Lock dimension",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Drawing title",
+      "warningOk": "Geometry is OK",
+      "warningAlert": "Warnings: {{count}}"
+    },
+    "subbar": {
+      "undoIcon": "↶",
+      "redoIcon": "↷",
+      "dimensionLabel": "Dimension",
+      "dimensionPlaceholder": "Value",
+      "angleLabel": "Angle",
+      "anglePlaceholder": "Degrees",
+      "connectedSegmentReadOnly": "Segment is connected: length/angle editing is locked",
+      "noDimension": "Select segment with dimension"
+    },
+    "left": {
+      "segmentsTitle": "Segments",
+      "geometryModuleTitle": "Geometry",
+      "addDefaultLineAction": "Add default line",
+      "addRectangleAction": "Add rectangle",
+      "addDefaultLinePrompt": "Enter new segment length (mm)",
+      "addRectangleWidthPrompt": "Enter rectangle width (mm)",
+      "addRectangleLengthPrompt": "Enter rectangle length (mm)",
+      "addDefaultLineInvalid": "Invalid segment length.",
+      "addRectangleInvalid": "Invalid rectangle size.",
+      "idleMessage": "No messages"
+    },
+    "bottom": {
+      "zoomOut": "-",
+      "zoomIn": "+",
+      "reset": "Reset",
+      "zoomValue": "Zoom {{value}}x",
+      "contours": "Contours: {{count}}",
+      "warnings": "Warnings: {{count}}"
+    }
   },
   "errors": {
     "title": "Unexpected UI error",
@@ -91,3 +105,4 @@
     "action": "Reset view"
   }
 }
+

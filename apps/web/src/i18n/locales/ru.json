@@ -3,87 +3,101 @@
     "title": "Drawing Editor MVP",
     "subtitle": "Каркас frontend"
   },
-  "editorShell": {
-    "header": {
-      "ariaLabel": "Шапка приложения",
-      "subtitle": "Каркас страницы редактора этапа 6 без AI-интеграции"
-    },
-    "sidebar": {
-      "ariaLabel": "Боковая панель редактора",
-      "toolsTitle": "Панель инструментов",
-      "toolsPlaceholder": "Базовые операции ручного редактирования геометрии включены в каркасе этого этапа.",
-      "createLineAction": "Создать линию",
-      "connectPointsAction": "Соединить точки",
-      "deleteSegmentAction": "Удалить сегмент",
-      "navigationTitle": "Навигация viewport",
-      "navigationPlaceholder": "Перетаскивание двигает поле, колесо мыши масштабирует; кнопки доступны ниже.",
-      "zoomInAction": "Приблизить",
-      "zoomOutAction": "Отдалить",
-      "resetViewAction": "Сбросить вид"
-    },
-    "workspace": {
-      "ariaLabel": "Визуальное рабочее поле редактора",
-      "title": "Рабочая область",
-      "subtitle": "В этом каркасе активны viewport, сетка, геометрические слои, размеры и подсветка предупреждений.",
-      "canvasAriaLabel": "Холст редактора"
-    },
-    "selection": {
-      "title": "Выделение",
-      "description": "Выделение точки и сегмента доступно для базового редактирования геометрии.",
-      "none": "Ничего не выбрано",
-      "point": "Точка: contour={{contourId}}, id={{pointId}}",
-      "segment": "Сегмент: contour={{contourId}}, id={{segmentId}}",
-      "twoPoints": "Выбраны точки: {{first}} и {{second}}",
-      "multiSelectHint": "Удерживайте Shift и кликайте по точкам, чтобы выбрать до двух точек.",
-      "counts": "Контуры={{contours}}, точки={{points}}, сегменты={{segments}}"
-    },
-    "dimensions": {
-      "ariaLabel": "Панель размеров",
-      "title": "Размеры",
-      "description": "Редактирование числовых подписей, привязанных к сегментам.",
-      "itemLabel": "Контур={{contourId}}, сегмент={{segmentId}}",
-      "inputPlaceholder": "Значение размера",
-      "resolved": "Разобран",
-      "unresolved": "Не разобран"
-    },
-    "warnings": {
-      "ariaLabel": "Геометрические предупреждения",
-      "title": "Предупреждения геометрии",
-      "description": "Базовые проверки геометрии для каркаса редактора этапа 6.",
-      "none": "Геометрических предупреждений нет",
-      "item": "{{code}} в контуре {{contourId}}",
-      "codes": {
-        "geometry.contour_open": "Контур не замкнут",
-        "geometry.segment_broken_reference": "Сегмент ссылается на несуществующую точку",
-        "geometry.segment_too_short": "Сегмент слишком короткий",
-        "geometry.point_degree_invalid": "Некорректная связность точки"
-      }
-    },
-    "history": {
-      "ariaLabel": "История действий",
-      "title": "Архитектурная точка истории",
-      "placeholder": "Точка интеграции undo/redo инициализирована, привязка действий будет добавлена позже.",
-      "undoAction": "Отменить",
-      "redoAction": "Повторить"
-    },
-    "status": {
-      "ariaLabel": "Строка статуса редактора",
-      "title": "Статус",
-      "api": "API: {{url}}",
-      "locale": "Локаль: {{locale}}",
-      "zoom": "Масштаб: {{value}}x",
-      "viewportOffset": "Смещение viewport: x={{x}}, y={{y}}",
-      "selected": "Выбрано: {{value}}",
-      "closure": "Замкнутость контуров: closed={{closed}}, open={{open}}",
-      "dimensions": "Размеры: total={{total}}, unresolved={{unresolved}}",
-      "geometryWarnings": "Предупреждения геометрии: {{count}}",
-      "historyState": "Стек истории: undo={{undoCount}}, redo={{redoCount}}"
-    }
-  },
   "language": {
     "label": "Язык",
     "ru": "Русский",
     "en": "Английский"
+  },
+  "home": {
+    "title": "Список чертежей",
+    "subtitle": "Стартовый экран со списком и созданием нового чертежа.",
+    "loading": "Загрузка списка чертежей...",
+    "emptyTitle": "Список пока пуст",
+    "emptyDescription": "Создайте первый чертеж, чтобы перейти в редактор.",
+    "create": {
+      "openAction": "Создать",
+      "modalTitle": "Создание чертежа",
+      "modalDescription": "Выберите режим старта.",
+      "blankAction": "Пустой чертеж",
+      "aiAction": "Заглушка AI",
+      "cancelAction": "Отмена",
+      "defaultTitle": "Новый чертеж",
+      "aiPlaceholderMessage": "Заглушка AI готова, но интеграция пока не активна."
+    },
+    "errors": {
+      "loadListFailed": "Ошибка загрузки списка чертежей: {{message}}",
+      "createFailed": "Ошибка создания чертежа: {{message}}"
+    }
+  },
+  "editor": {
+    "canvas": {
+      "ariaLabel": "Холст редактора",
+      "deleteSegmentAction": "Удалить",
+      "disconnectSegmentsAction": "Разъединить"
+    },
+    "selection": {
+      "none": "Ничего не выбрано",
+      "point": "Точка {{pointId}} ({{contourId}})",
+      "segment": "Сегмент {{segmentId}} ({{contourId}})",
+      "twoPoints": "Точки {{first}} и {{second}}",
+      "twoSegments": "Выбрано сегментов: {{count}}"
+    },
+    "sync": {
+      "messages": {
+        "loadSuccess": "Чертеж загружен.",
+        "saveSuccess": "Чертеж сохранен."
+      },
+      "errors": {
+        "noDrawingSelected": "Сначала откройте чертеж из списка.",
+        "loadFailed": "Ошибка загрузки: {{message}}",
+        "saveFailed": "Ошибка сохранения: {{message}}",
+        "lengthEditLocked": "Режим фиксации: изменение длины запрещено.",
+        "topologyChangeLocked": "Режим фиксации: стыковка и разъединение отключены.",
+        "disconnectPairNotFound": "Не удалось найти пару соединенных сегментов для разъединения."
+      }
+    },
+    "top": {
+      "backToList": "К списку",
+      "saveAction": "Сохранить",
+      "savingAction": "Сохранение...",
+      "deleteAction": "Удалить",
+      "disconnectAction": "Разъединить",
+      "dimensionLockAction": "Зафиксировать размер",
+      "titleLabel": "Название",
+      "titlePlaceholder": "Название чертежа",
+      "warningOk": "Геометрия без предупреждений",
+      "warningAlert": "Предупреждения: {{count}}"
+    },
+    "subbar": {
+      "undoIcon": "↶",
+      "redoIcon": "↷",
+      "dimensionLabel": "Размер",
+      "dimensionPlaceholder": "Значение",
+      "angleLabel": "Угол",
+      "anglePlaceholder": "Градусы",
+      "connectedSegmentReadOnly": "Сегмент в соединении: изменение размера/угла заблокировано",
+      "noDimension": "Выберите сегмент с размером"
+    },
+    "left": {
+      "segmentsTitle": "Сегменты",
+      "geometryModuleTitle": "Геометрия",
+      "addDefaultLineAction": "Добавить дефолтную линию",
+      "addRectangleAction": "Добавить прямоугольник",
+      "addDefaultLinePrompt": "Введите длину нового сегмента (мм)",
+      "addRectangleWidthPrompt": "Введите ширину прямоугольника (мм)",
+      "addRectangleLengthPrompt": "Введите длину прямоугольника (мм)",
+      "addDefaultLineInvalid": "Некорректная длина сегмента.",
+      "addRectangleInvalid": "Некорректные размеры прямоугольника.",
+      "idleMessage": "Сообщений нет"
+    },
+    "bottom": {
+      "zoomOut": "-",
+      "zoomIn": "+",
+      "reset": "Сброс",
+      "zoomValue": "Масштаб {{value}}x",
+      "contours": "Контуры: {{count}}",
+      "warnings": "Предупреждения: {{count}}"
+    }
   },
   "errors": {
     "title": "Неожиданная ошибка интерфейса",
@@ -91,3 +105,4 @@
     "action": "Сбросить экран"
   }
 }
+

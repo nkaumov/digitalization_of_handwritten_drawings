@@ -1,6 +1,7 @@
 ﻿import { useCallback, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
 
 import { computeGridVisualState } from '@/domains/grid';
+import { GEOMETRY_CANVAS_HEIGHT, GEOMETRY_CANVAS_WIDTH } from '@/domains/geometry';
 import {
   INITIAL_VIEWPORT_STATE,
   panViewport,
@@ -44,10 +45,11 @@ export function useViewportNavigation(): ViewportNavigationResult {
       return;
     }
 
-    if (event.button !== 0) {
+    if (event.button !== 1) {
       return;
     }
 
+    event.preventDefault();
     panStateRef.current = {
       active: true,
       lastClientX: event.clientX,
@@ -63,8 +65,11 @@ export function useViewportNavigation(): ViewportNavigationResult {
       return;
     }
 
-    const deltaX = event.clientX - panState.lastClientX;
-    const deltaY = event.clientY - panState.lastClientY;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const unitScaleX = GEOMETRY_CANVAS_WIDTH / Math.max(rect.width, 1);
+    const unitScaleY = GEOMETRY_CANVAS_HEIGHT / Math.max(rect.height, 1);
+    const deltaX = (event.clientX - panState.lastClientX) * unitScaleX;
+    const deltaY = (event.clientY - panState.lastClientY) * unitScaleY;
 
     panStateRef.current = {
       ...panState,
@@ -86,8 +91,8 @@ export function useViewportNavigation(): ViewportNavigationResult {
     event.preventDefault();
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const anchorX = event.clientX - rect.left;
-    const anchorY = event.clientY - rect.top;
+    const anchorX = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * GEOMETRY_CANVAS_WIDTH;
+    const anchorY = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * GEOMETRY_CANVAS_HEIGHT;
 
     setViewport((current) =>
       zoomViewportAt(current, {
@@ -102,8 +107,8 @@ export function useViewportNavigation(): ViewportNavigationResult {
     setViewport((current) =>
       zoomViewportAt(current, {
         deltaY: -1,
-        anchorX: 0,
-        anchorY: 0,
+        anchorX: GEOMETRY_CANVAS_WIDTH / 2,
+        anchorY: GEOMETRY_CANVAS_HEIGHT / 2,
       }),
     );
   }, []);
@@ -112,8 +117,8 @@ export function useViewportNavigation(): ViewportNavigationResult {
     setViewport((current) =>
       zoomViewportAt(current, {
         deltaY: 1,
-        anchorX: 0,
-        anchorY: 0,
+        anchorX: GEOMETRY_CANVAS_WIDTH / 2,
+        anchorY: GEOMETRY_CANVAS_HEIGHT / 2,
       }),
     );
   }, []);

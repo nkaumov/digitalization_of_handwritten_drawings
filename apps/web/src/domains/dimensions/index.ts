@@ -9,12 +9,18 @@ export interface DimensionLabelItem {
   x: number;
   y: number;
   text: string;
+  boxWidth: number;
   hasWarning: boolean;
 }
 
 function parseDimensionValue(rawText: string): number | null {
   const normalized = rawText.trim().replace(',', '.');
   if (!normalized) {
+    return null;
+  }
+
+  const numericPattern = /^[+-]?\d+(?:\.\d+)?$/;
+  if (!numericPattern.test(normalized)) {
     return null;
   }
 
@@ -52,7 +58,35 @@ function withDimensionText(dimension: DimensionPayload): string {
   return dimension.rawText.trim() || (dimension.parsedValue !== null ? `${dimension.parsedValue}` : '?');
 }
 
-function getLabelPosition(segment: SegmentPayload, pointById: Map<string, { x: number; y: number }>): { x: number; y: number } | null {
+function estimateLabelWidth(text: string): number {
+  return Math.max(34, text.length * 7 + 14);
+}
+
+function contourCentroid(pointById: Map<string, { x: number; y: number }>): { x: number; y: number } | null {
+  const points = [...pointById.values()];
+  if (points.length === 0) {
+    return null;
+  }
+
+  const sum = points.reduce(
+    (acc, point) => ({
+      x: acc.x + point.x,
+      y: acc.y + point.y,
+    }),
+    { x: 0, y: 0 },
+  );
+
+  return {
+    x: sum.x / points.length,
+    y: sum.y / points.length,
+  };
+}
+
+function getLabelPosition(
+  segment: SegmentPayload,
+  pointById: Map<string, { x: number; y: number }>,
+  isClosedContour: boolean,
+): { x: number; y: number } | null {
   const from = pointById.get(segment.from);
   const to = pointById.get(segment.to);
   if (!from || !to) {
@@ -70,13 +104,27 @@ function getLabelPosition(segment: SegmentPayload, pointById: Map<string, { x: n
     return { x: midX, y: midY };
   }
 
-  const offset = 12;
-  const normalX = (-dy / length) * offset;
-  const normalY = (dx / length) * offset;
+  const offset = 16;
+  const normalA = { x: (-dy / length) * offset, y: (dx / length) * offset };
+  const normalB = { x: -normalA.x, y: -normalA.y };
+
+  if (isClosedContour) {
+    const centroid = contourCentroid(pointById);
+    if (centroid) {
+      const candidateA = { x: midX + normalA.x, y: midY + normalA.y };
+      const candidateB = { x: midX + normalB.x, y: midY + normalB.y };
+      const distanceA = Math.hypot(candidateA.x - centroid.x, candidateA.y - centroid.y);
+      const distanceB = Math.hypot(candidateB.x - centroid.x, candidateB.y - centroid.y);
+
+      return distanceA >= distanceB ? candidateA : candidateB;
+    }
+  }
+
+  const preferred = normalA.y <= normalB.y ? normalA : normalB;
 
   return {
-    x: midX + normalX,
-    y: midY + normalY,
+    x: midX + preferred.x,
+    y: midY + preferred.y,
   };
 }
 
@@ -85,27 +133,30 @@ export function buildDimensionLabels(scene: GeometryScene): DimensionLabelItem[]
 
   for (const contourScene of scene.contours) {
     const pointById = new Map(contourScene.points.map((item) => [item.point.id, item.point]));
-    const segmentById = new Map(contourScene.segments.map((item) => [item.segment.id, item.segment]));
+    const dimensionBySegment = new Map(contourScene.contour.dimensions.map((item) => [item.segmentId, item]));
 
-    for (const dimension of contourScene.contour.dimensions) {
-      const segment = segmentById.get(dimension.segmentId);
-      if (!segment) {
-        continue;
-      }
-
-      const position = getLabelPosition(segment, pointById);
+    for (const segmentNode of contourScene.segments) {
+      const position = getLabelPosition(segmentNode.segment, pointById, contourScene.contour.closed);
       if (!position) {
         continue;
       }
 
+      const dimension = dimensionBySegment.get(segmentNode.segment.id);
+      const fallbackLength = Math.hypot(
+        segmentNode.to.x - segmentNode.from.x,
+        segmentNode.to.y - segmentNode.from.y,
+      );
+      const text = dimension ? withDimensionText(dimension) : fallbackLength.toFixed(1);
+
       labels.push({
         contourId: contourScene.contour.id,
-        dimensionId: dimension.id,
-        segmentId: dimension.segmentId,
+        dimensionId: dimension?.id ?? `${contourScene.contour.id}:${segmentNode.segment.id}:auto`,
+        segmentId: segmentNode.segment.id,
         x: position.x,
         y: position.y,
-        text: withDimensionText(dimension),
-        hasWarning: dimension.warnings.length > 0 || !dimension.isResolved,
+        text,
+        boxWidth: estimateLabelWidth(text),
+        hasWarning: dimension ? dimension.warnings.length > 0 || !dimension.isResolved : false,
       });
     }
   }

@@ -1,6 +1,8 @@
 ﻿import type { WarningLevel } from '@contracts';
 import type { DrawingPayload } from '@contracts';
 
+const SHORT_SEGMENT_THRESHOLD = 20;
+
 export interface GeometryWarningItem {
   id: string;
   code: string;
@@ -48,7 +50,7 @@ export function collectGeometryWarnings(payload: DrawingPayload): GeometryWarnin
         continue;
       }
 
-      if (segmentLength({ from, to }) < 12) {
+      if (segmentLength({ from, to }) <= SHORT_SEGMENT_THRESHOLD) {
         warnings.push({
           id: `${contour.id}:${segment.id}:short`,
           code: 'geometry.segment_too_short',

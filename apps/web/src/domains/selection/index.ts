@@ -12,26 +12,52 @@ export interface SegmentSelectionTarget {
 
 export interface SelectionState {
   points: PointSelectionTarget[];
-  segment: SegmentSelectionTarget | null;
+  segments: SegmentSelectionTarget[];
 }
 
 export const INITIAL_SELECTION_STATE: SelectionState = {
   points: [],
-  segment: null,
+  segments: [],
 };
 
 export function clearSelection(): SelectionState {
   return INITIAL_SELECTION_STATE;
 }
 
-export function selectSegment(contourId: string, segmentId: string): SelectionState {
+export function selectSegmentExclusive(contourId: string, segmentId: string): SelectionState {
   return {
     points: [],
-    segment: {
-      kind: 'segment',
-      contourId,
-      segmentId,
-    },
+    segments: [
+      {
+        kind: 'segment',
+        contourId,
+        segmentId,
+      },
+    ],
+  };
+}
+
+export function toggleSegmentInSelection(
+  state: SelectionState,
+  contourId: string,
+  segmentId: string,
+): SelectionState {
+  const existing = state.segments.findIndex(
+    (segment) => segment.contourId === contourId && segment.segmentId === segmentId,
+  );
+
+  if (existing >= 0) {
+    return {
+      points: [],
+      segments: state.segments.filter((_, index) => index !== existing),
+    };
+  }
+
+  const nextSegments = [...state.segments, { kind: 'segment' as const, contourId, segmentId }];
+
+  return {
+    points: [],
+    segments: nextSegments,
   };
 }
 
@@ -44,7 +70,7 @@ export function selectPointExclusive(contourId: string, pointId: string): Select
         pointId,
       },
     ],
-    segment: null,
+    segments: [],
   };
 }
 
@@ -60,7 +86,7 @@ export function togglePointInSelection(
   if (existing >= 0) {
     return {
       points: state.points.filter((_, index) => index !== existing),
-      segment: null,
+      segments: [],
     };
   }
 
@@ -68,7 +94,7 @@ export function togglePointInSelection(
 
   return {
     points: nextPoints.slice(-2),
-    segment: null,
+    segments: [],
   };
 }
 
@@ -77,5 +103,7 @@ export function isPointSelected(state: SelectionState, contourId: string, pointI
 }
 
 export function isSegmentSelected(state: SelectionState, contourId: string, segmentId: string): boolean {
-  return !!state.segment && state.segment.contourId === contourId && state.segment.segmentId === segmentId;
+  return state.segments.some(
+    (segment) => segment.contourId === contourId && segment.segmentId === segmentId,
+  );
 }
