@@ -117,3 +117,15 @@ endpoint экспорта в PDF и endpoint экспорта в изображ�
 
 ### Статус этапа
 - Этап 8 закрыт по факту как инфраструктурный каркас AI-service (без OCR/OpenCV и реальных моделей).
+
+## Этап 9. Реализация стадии предобработки изображения
+### Что зафиксировано по факту
+- В `apps/ai-service` добавлен preprocessing context (metadata + outputs).
+- Реализованы базовые стадии: `normalize-image` (autocontrast), `denoise-image` (median filter), `deskew-image` (оценка угла + поворот).
+- Реализованы отдельные outputs для `prepare-line-image` и `prepare-text-image`.
+- Сохраняются debug-артефакты нормализации/денойза/дескейва и входов для line/text detection.
+- Добавлены `preprocess-summary` snapshots для сравнения результатов предобработки между стадиями.
+- Добавлен локальный fixture workflow и отчет сравнения (manifest + скрипт + reports).
+
+### Статус этапа
+- Этап 9 закрыт по факту в рамках preprocessing (без line detection/OCR).

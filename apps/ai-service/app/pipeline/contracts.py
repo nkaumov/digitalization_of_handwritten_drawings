@@ -23,6 +23,11 @@ class StageNote(TypedDict, total=False):
 
 DebugArtifactKind = Literal[
     "normalized-image",
+    "denoised-image",
+    "deskewed-image",
+    "line-detection-input",
+    "text-detection-input",
+    "preprocess-summary",
     "detected-lines",
     "detected-text",
     "parsed-dimensions",
@@ -50,11 +55,28 @@ class DrawingPayloadDraft(TypedDict, total=False):
     confidence: float | None
 
 
+class PreprocessContext(TypedDict, total=False):
+    image_path: str
+    exists: bool
+    size_bytes: int | None
+    mime_type: str | None
+    extension: str | None
+    created_at_iso: str | None
+    modified_at_iso: str | None
+    width: int | None
+    height: int | None
+    image_format: str | None
+    color_mode: str | None
+    notes: List[str]
+    outputs: List[Dict[str, Any]]
+
+
 class PipelineContext(TypedDict, total=False):
     image_path: str
     drawing_id: str
     target_unit: Literal["mm"]
     payload: DrawingPayloadDraft
+    preprocess: PreprocessContext
     warnings: List[PipelineWarning]
     stage_notes: List[StageNote]
     debug_artifacts: List[DebugArtifact]

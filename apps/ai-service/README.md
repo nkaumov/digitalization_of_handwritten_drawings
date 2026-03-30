@@ -57,3 +57,13 @@ Step debug (single stage or up to stage):
 python -m app.pipeline.cli C:\path\to\image.jpg --stage detect-lines --step
 python -m app.pipeline.cli C:\path\to\image.jpg --until find-contours --pause
 ```
+
+## Preprocess fixtures
+
+Local fixture set for comparing preprocessing results:
+
+```bash
+python apps/ai-service/scripts/run_preprocess_fixtures.py
+```
+
+Fixtures live in `apps/ai-service/preprocess_fixtures`.
