@@ -50,11 +50,25 @@ class DrawingPayloadDraft(TypedDict, total=False):
     confidence: float | None
 
 
+class PreprocessContext(TypedDict, total=False):
+    image_path: str
+    exists: bool
+    size_bytes: int | None
+    mime_type: str | None
+    extension: str | None
+    created_at_iso: str | None
+    modified_at_iso: str | None
+    width: int | None
+    height: int | None
+    notes: List[str]
+
+
 class PipelineContext(TypedDict, total=False):
     image_path: str
     drawing_id: str
     target_unit: Literal["mm"]
     payload: DrawingPayloadDraft
+    preprocess: PreprocessContext
     warnings: List[PipelineWarning]
     stage_notes: List[StageNote]
     debug_artifacts: List[DebugArtifact]
