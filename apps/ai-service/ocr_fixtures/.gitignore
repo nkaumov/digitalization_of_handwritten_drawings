@@ -1,0 +1,6 @@
+/images/*
+/outputs/*
+/reports/*
+!/images/.gitkeep
+!/outputs/.gitkeep
+!/reports/.gitkeep

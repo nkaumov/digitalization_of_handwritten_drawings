@@ -1,0 +1,17 @@
+{
+  "version": "1",
+  "items": [
+    {
+      "id": "rect-4-7-590",
+      "path": "C:\\Users\\nkaum\\Downloads\\Telegram Desktop\\photo_2026-03-31_09-31-48.jpg",
+      "expected_values": [4.7, 590],
+      "note": "rectangle with 4,7 and 590"
+    },
+    {
+      "id": "rect-135-270",
+      "path": "C:\\Users\\nkaum\\Downloads\\Telegram Desktop\\photo_2026-03-31_08-56-06.jpg",
+      "expected_values": [135, 270],
+      "note": "rectangle with 135 and 270"
+    }
+  ]
+}

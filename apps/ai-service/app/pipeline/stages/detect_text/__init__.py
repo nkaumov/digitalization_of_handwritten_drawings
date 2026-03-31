@@ -12,13 +12,13 @@ from app.core.config import settings
 from app.core.logger import get_logger
 from app.pipeline.preprocess import get_latest_output_path
 from app.pipeline.types import PipelineStageInput, PipelineStageOutput
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps
 
 logger = get_logger(__name__)
 
-MIN_TEXT_AREA = 250
-MAX_TEXT_AREA = 15000
-MAX_DIM = 800
+MIN_TEXT_AREA = 120
+MAX_TEXT_AREA = 30000
+MAX_DIM = 1200
 
 
 @dataclass(frozen=True)
@@ -43,8 +43,34 @@ def _resize(image: Image.Image) -> Tuple[Image.Image, float]:
     return resized, scale
 
 
-def _binary_mask(image: Image.Image, threshold: int = 180) -> Image.Image:
-    gray = image.convert("L")
+def _otsu_threshold(gray: Image.Image) -> int:
+    histogram = gray.histogram()
+    total = sum(histogram)
+    sum_total = sum(i * histogram[i] for i in range(256))
+    sum_background = 0
+    weight_background = 0
+    max_variance = 0.0
+    threshold = 128
+    for i in range(256):
+        weight_background += histogram[i]
+        if weight_background == 0:
+            continue
+        weight_foreground = total - weight_background
+        if weight_foreground == 0:
+            break
+        sum_background += i * histogram[i]
+        mean_background = sum_background / weight_background
+        mean_foreground = (sum_total - sum_background) / weight_foreground
+        variance = weight_background * weight_foreground * (mean_background - mean_foreground) ** 2
+        if variance > max_variance:
+            max_variance = variance
+            threshold = i
+    return threshold
+
+
+def _binary_mask(image: Image.Image) -> Image.Image:
+    gray = ImageOps.autocontrast(image.convert("L"))
+    threshold = _otsu_threshold(gray)
     return gray.point(lambda v: 255 if v < threshold else 0)
 
 
@@ -98,12 +124,20 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
             with Image.open(source_path) as image:
                 resized, scale = _resize(image)
                 mask = _binary_mask(resized)
+                # Thicken small digits so connected components form stable regions.
+                mask = mask.filter(ImageFilter.MaxFilter(3))
+                mask = mask.filter(ImageFilter.MaxFilter(3))
                 components = _find_components(mask)
+                width_total, height_total = mask.size
+                min_area = max(MIN_TEXT_AREA, int(width_total * height_total * 0.00005))
+                max_area = min(MAX_TEXT_AREA, int(width_total * height_total * 0.08))
                 idx = 1
                 for x1, y1, x2, y2, area in components:
                     width = x2 - x1 + 1
                     height = y2 - y1 + 1
-                    if area < MIN_TEXT_AREA or area > MAX_TEXT_AREA:
+                    if area < min_area or area > max_area:
+                        continue
+                    if width < 8 or height < 8:
                         continue
                     regions.append(
                         TextRegion(
