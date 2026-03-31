@@ -17,6 +17,7 @@ from PIL import Image
 logger = get_logger(__name__)
 
 _DIGIT_RE = re.compile(r"[0-9]+(?:[.,][0-9]+)?")
+_MIN_CONFIDENCE = 60
 
 
 @dataclass(frozen=True)
@@ -27,12 +28,17 @@ class OcrRegionResult:
     w: int
     h: int
     raw: str
+    confidence: float | None
     values: List[float]
+
+
+def _normalize_decimal(value: str) -> str:
+    return value.replace(",", ".")
 
 
 def _safe_parse(value: str) -> float | None:
     try:
-        return float(value.replace(",", "."))
+        return float(_normalize_decimal(value))
     except ValueError:
         return None
 
@@ -134,6 +140,17 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
                     crop,
                     config="--psm 7 -c tessedit_char_whitelist=0123456789,.",
                 ).strip()
+                data = pytesseract.image_to_data(
+                    crop,
+                    config="--psm 7 -c tessedit_char_whitelist=0123456789,.",
+                    output_type=pytesseract.Output.DICT,
+                )
+                confidences = [
+                    float(conf)
+                    for conf in data.get("conf", [])
+                    if conf not in ("-1", "") and float(conf) >= 0
+                ]
+                confidence = sum(confidences) / len(confidences) if confidences else None
                 values = _extract_values(raw)
                 results.append(
                     OcrRegionResult(
@@ -143,6 +160,7 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
                         w=region.get("w", 0),
                         h=region.get("h", 0),
                         raw=raw,
+                        confidence=confidence,
                         values=values,
                     )
                 )
@@ -150,19 +168,25 @@ def run(stage_input: PipelineStageInput) -> PipelineStageOutput:
         logger.warning("OCR failed", extra={"error": str(exc)})
 
     raw_entries = [asdict(item) for item in results]
-    candidates = [
-        {
-            "region_id": item.id,
-            "values": item.values,
-            "raw": item.raw,
-        }
-        for item in results
-        if item.values
-    ]
+    candidates = []
+    for item in results:
+        if not item.values:
+            continue
+        if item.confidence is not None and item.confidence < _MIN_CONFIDENCE:
+            continue
+        candidates.append(
+            {
+                "region_id": item.id,
+                "values": item.values,
+                "raw": item.raw,
+                "confidence": item.confidence,
+            }
+        )
 
     context.setdefault("meta", {})
     context["meta"]["ocr_raw"] = raw_entries
     context["meta"]["ocr_candidates"] = candidates
+    context["meta"]["ocr_confidence_threshold"] = _MIN_CONFIDENCE
 
     if settings.debug_artifacts_enabled:
         debug_dir = Path(settings.debug_artifacts_dir)
