@@ -32,6 +32,10 @@ apps/api/storage/exports/*
 apps/api/storage/debug/*
 !apps/api/storage/debug/.gitkeep
 
+# AI-service runtime storage contents (keep folders only)
+apps/ai-service/storage/*
+!apps/ai-service/storage/.gitkeep
+
 # Local terminal logs
 logs/*
 !logs/.gitkeep
