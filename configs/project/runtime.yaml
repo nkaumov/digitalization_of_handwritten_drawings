@@ -1,0 +1,37 @@
+﻿project:
+  name: handwritten_drawings_digitization
+  version: v5
+  timezone: Europe/Amsterdam
+
+runtime:
+  create_missing_directories: true
+  default_experiment_stage: foundation
+  default_experiment_name: bootstrap
+  use_timestamp_in_run_id: true
+  run_id_time_format: "%Y_%m_%d_%H%M%S"
+  save_config_snapshot: true
+  save_metrics_json: true
+  save_metrics_csv: true
+  save_summary_markdown: true
+
+logging:
+  level: INFO
+  log_to_console: true
+  log_to_file: false
+  file_name: run.log
+
+artifacts:
+  subdirectories:
+    - config
+    - metrics
+    - plots
+    - predictions
+    - debug
+    - best_samples
+    - worst_samples
+    - exports
+
+visualization:
+  default_dpi: 120
+  figure_format: png
+  save_figures: true

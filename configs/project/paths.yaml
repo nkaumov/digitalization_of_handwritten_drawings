@@ -1,0 +1,37 @@
+﻿project_root_name: v5
+
+paths:
+  configs_dir: configs
+  data_dir: data
+  raw_data_dir: data/raw
+  interim_data_dir: data/interim
+  annotations_dir: data/annotations
+  processed_data_dir: data/processed
+  splits_dir: data/splits
+  sample_sets_dir: data/sample_sets
+
+  docs_dir: docs
+  notebooks_dir: notebooks
+  src_dir: src
+  tests_dir: tests
+
+  experiments_dir: experiments
+  experiment_runs_dir: experiments/runs
+  experiment_leaderboards_dir: experiments/leaderboards
+  experiment_templates_dir: experiments/templates
+
+  reports_dir: reports
+  report_daily_notes_dir: reports/daily_notes
+  report_experiment_summaries_dir: reports/experiment_summaries
+  report_benchmark_reports_dir: reports/benchmark_reports
+  report_release_reports_dir: reports/release_reports
+  report_figures_dir: reports/figures
+
+  models_dir: models
+  model_checkpoints_dir: models/checkpoints
+  model_exported_dir: models/exported
+  model_registry_dir: models/registry
+
+  sandbox_dir: sandbox
+  sandbox_quick_checks_dir: sandbox/quick_checks
+  sandbox_throwaway_exports_dir: sandbox/throwaway_exports

@@ -1,0 +1,55 @@
+datasets:
+  - dataset_name: real_contour_only
+    source_type: real
+    subset: contour_only
+    root_dir: data/raw/real/contour_only
+    manifest_path: data/raw/real/contour_only/manifest.json
+    task_types:
+      - contour_segmentation
+      - contour_vectorization
+    label_status: partial
+    split_strategy: not_defined_yet
+    is_active: true
+    notes: Existing real photos focused on contour extraction.
+
+  - dataset_name: real_digits_only
+    source_type: real
+    subset: digits_only
+    root_dir: data/raw/real/digits_only
+    manifest_path: data/raw/real/digits_only/manifest.json
+    task_types:
+      - digit_recognition
+      - number_sequence_recognition
+    label_status: partial
+    split_strategy: not_defined_yet
+    is_active: true
+    notes: Existing real photos focused on handwritten numbers.
+
+  - dataset_name: real_drawings_with_dimensions
+    source_type: real
+    subset: drawings_with_dimensions
+    root_dir: data/raw/real/drawings_with_dimensions
+    manifest_path: data/raw/real/drawings_with_dimensions/manifest.json
+    task_types:
+      - contour_segmentation
+      - text_detection
+      - digit_recognition
+      - dimension_linking
+      - end_to_end
+    label_status: partial
+    split_strategy: not_defined_yet
+    is_active: true
+    notes: Main target-domain dataset with contour and dimensions.
+
+  - dataset_name: real_difficult_cases
+    source_type: real
+    subset: difficult_cases
+    root_dir: data/raw/real/difficult_cases
+    manifest_path: data/raw/real/difficult_cases/manifest.json
+    task_types:
+      - robustness
+      - regression_checks
+    label_status: partial
+    split_strategy: not_defined_yet
+    is_active: true
+    notes: Curated hard samples collected during experiments.

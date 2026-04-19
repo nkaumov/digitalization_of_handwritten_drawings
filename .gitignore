@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local IDE/system
+.vscode/
+.idea/
+.DS_Store/
+Thumbs.db
+
+# Build/artifacts
+dist/
+build/
+*.egg-info/
+
+# Logs
+logs/
+*.log
+
+# Large/generated data
+data/raw/
+data/interim/
+data/processed/
+data/external/
+reports/generated/
+outputs/
+artifacts/
+checkpoints/
+models/checkpoints/
+models/exported/
+
+# Keep folder structure placeholders if needed
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!reports/generated/.gitkeep
+!outputs/.gitkeep
+!artifacts/.gitkeep
+!models/checkpoints/.gitkeep
+!models/exported/.gitkeep

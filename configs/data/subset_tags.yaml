@@ -1,0 +1,26 @@
+difficulty_tags:
+  - easy
+  - medium
+  - hard
+
+background_tags:
+  - plain_paper
+  - graph_paper
+  - textured_surface
+  - wall
+  - mixed
+
+instrument_tags:
+  - pen
+  - pencil
+  - marker
+  - chalk
+  - mixed
+
+quality_tags:
+  - clear
+  - low_contrast
+  - blurry
+  - shadowed
+  - perspective_distorted
+  - cluttered
